@@ -231,9 +231,126 @@ func set_quest(cages):
 	$Board/CageGrid.cage_ix = cage_ix
 	$Board/CageGrid.update()
 	#update()
+func is_duplicated(ix : int):
+	var n = get_cell_numer(ix)
+	if n == 0: return false
+	var x = ix % N_HORZ
+	var y = ix / N_HORZ
+	for t in range(N_HORZ):
+		if t != x && get_cell_numer(xyToIX(t, y)) == n:
+			return true
+		if t != y && get_cell_numer(xyToIX(x, t)) == n:
+			return true
+	var x0 = x - x % 3		# 3x2ブロック左上位置
+	var y0 = y - y % 2
+	for v in range(2):
+		for h in range(3):
+			var ix3 = xyToIX(x0+h, y0+v)
+			if ix3 != ix && get_cell_numer(ix3) == n:
+				return true
+	return false
+func check_duplicated():
+	nDuplicated = 0
+	for ix in range(N_CELLS):
+		if is_duplicated(ix):
+			nDuplicated += 1
+			clue_labels[ix].add_color_override("font_color", COLOR_DUP)
+			input_labels[ix].add_color_override("font_color", COLOR_DUP)
+		else:
+			clue_labels[ix].add_color_override("font_color", COLOR_CLUE)
+			input_labels[ix].add_color_override("font_color", COLOR_INPUT)
+	pass
+func update_num_buttons_disabled():		# 使い切った数字ボタンをディセーブル
+	#var nUsed = []		# 各数字の使用数 [0] for EMPTY
+	for i in range(N_HORZ+1): num_used[i] = 0
+	for ix in range(N_CELLS):
+		num_used[get_cell_numer(ix)] += 1
+	for i in range(N_HORZ):
+		num_buttons[i+1].disabled = num_used[i+1] >= N_HORZ
+func sound_effect():
+	if sound:
+		if input_num > 0 && num_used[input_num] >= 9:
+			$AudioNumCompleted.play()
+		else:
+			$AudioNumClicked.play()
+func clear_cell_cursor():
+	for y in range(N_VERT):
+		for x in range(N_HORZ):
+			$Board/TileMap.set_cell(x, y, TILE_NONE)
+func do_emphasize(ix : int, type, fullhouse):
+	pass
+func add_falling_char(num_str, ix : int):
+	pass
+func add_falling_memo(num : int, ix : int):
+	pass
 func get_cell_numer(ix) -> int:		# ix 位置に入っている数字の値を返す、0 for 空欄
 	if clue_labels[ix].text != "":
 		return int(clue_labels[ix].text)
 	if input_labels[ix].text != "":
 		return int(input_labels[ix].text)
 	return 0
+func update_cell_cursor(num):		# 選択数字ボタンと同じ数字セルを強調
+	if num > 0 && !paused:
+		var num_str = String(num)
+		for y in range(N_VERT):
+			for x in range(N_HORZ):
+				var ix = xyToIX(x, y)
+				if num != 0 && get_cell_numer(ix) == num:
+					$Board/TileMap.set_cell(x, y, TILE_CURSOR)
+				else:
+					$Board/TileMap.set_cell(x, y, TILE_NONE)
+				for v in range(3):
+					for h in range(3):
+						var n = v * 3 + h + 1
+						var t = TILE_NONE
+						if memo_labels[ix][n-1].text == num_str:
+							t = TILE_CURSOR
+						##$Board/MemoTileMap.set_cell(x*3+h, y*3+v, t)
+	else:
+		for y in range(N_VERT):
+			for x in range(N_HORZ):
+				$Board/TileMap.set_cell(x, y, TILE_NONE)
+				##for v in range(3):
+				##	for h in range(3):
+				##		$Board/MemoTileMap.set_cell(x*3+h, y*3+v, TILE_NONE)
+		if cur_cell_ix >= 0:
+			do_emphasize(cur_cell_ix, CELL, false)
+	pass
+func set_num_cursor(num):	# 当該ボタンだけを選択状態に
+	cur_num = num
+	for i in range(num_buttons.size()):
+		num_buttons[i].pressed = (i == num)
+func update_all_status():
+	##update_undo_redo()
+	update_cell_cursor(cur_num)
+	##update_NEmptyLabel()
+	update_num_buttons_disabled()
+	check_duplicated()
+func num_button_pressed(num : int, button_pressed):
+	print("num = ", num)
+	if in_button_pressed: return		# ボタン押下処理中の場合
+	if paused: return			# ポーズ中
+	in_button_pressed = true
+	if cur_cell_ix >= 0:		# セルが選択されている場合
+		pass
+	else:	# セルが選択されていない場合
+		if button_pressed:
+			set_num_cursor(num)
+		else:
+			cur_num = -1		# toggled
+		update_cell_cursor(cur_num)
+	in_button_pressed = false
+	update_all_status()
+	pass
+func _on_Button1_toggled(button_pressed):
+	num_button_pressed(1, button_pressed)
+func _on_Button2_toggled(button_pressed):
+	num_button_pressed(2, button_pressed)
+func _on_Button3_toggled(button_pressed):
+	num_button_pressed(3, button_pressed)
+func _on_Button4_toggled(button_pressed):
+	num_button_pressed(4, button_pressed)
+func _on_Button5_toggled(button_pressed):
+	num_button_pressed(5, button_pressed)
+func _on_Button6_toggled(button_pressed):
+	num_button_pressed(6, button_pressed)
