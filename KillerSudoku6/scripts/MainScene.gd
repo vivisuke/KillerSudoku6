@@ -326,6 +326,73 @@ func update_all_status():
 	##update_NEmptyLabel()
 	update_num_buttons_disabled()
 	check_duplicated()
+func _input(event):
+	if menuPopuped: return
+	if event is InputEventMouseButton && event.is_pressed():
+		if event.button_index == BUTTON_WHEEL_UP || event.button_index == BUTTON_WHEEL_DOWN:
+				return
+		##if paused: return
+		var mp = $Board/TileMap.world_to_map($Board/TileMap.get_local_mouse_position())
+		print(mp)
+		if mp.x < 0 || mp.x >= N_HORZ || mp.y < 0 || mp.y >= N_VERT:
+			return		# 盤面セル以外の場合
+		input_num = -1
+		var ix = xyToIX(mp.x, mp.y)
+		if clue_labels[ix].text != "":
+			# undone: 手がかり数字ボタン選択
+			num_button_pressed(int(clue_labels[ix].text), true)
+		else:
+			if cur_num < 0:			# 数字ボタン非選択の場合
+				clear_cell_cursor()
+				if ix == cur_cell_ix:
+					cur_cell_ix = -1
+				else:
+					cur_cell_ix = ix
+					do_emphasize(ix, CELL, false)
+				update_all_status()
+				return
+			if cur_num == 0:	# 削除ボタン選択中
+				if input_labels[ix].text != "":
+					##add_falling_char(input_labels[ix].text, ix)
+					#push_to_undo_stack([UNDO_TYPE_CELL, ix, int(input_labels[ix].text), 0, [], 0])		# ix, old, new
+					input_labels[ix].text = ""
+				else:
+					for i in range(N_HORZ):
+						if memo_labels[ix][i].text != "":
+					#		add_falling_memo(int(memo_labels[ix][i].text), ix)
+							memo_labels[ix][i].text = ""	# メモ数字削除
+					pass
+			# 数字ボタン選択状態の場合 → セルにその数字を入れる or メモ数字反転
+			elif !memo_mode:
+				if input_labels[ix].text != "":
+					add_falling_char(input_labels[ix].text, ix)
+				var num_str = String(cur_num)
+				if input_labels[ix].text == num_str:	# 同じ数字が入っていれば消去
+					##push_to_undo_stack([UNDO_TYPE_CELL, ix, int(cur_num), 0, [], 0])		# ix, old, new
+					input_labels[ix].text = ""
+				else:	# 上書き
+					input_num = int(cur_num)
+					##var lst = remove_memo_num(ix, cur_num)
+					#var mb = get_memo_bits(ix)
+					#push_to_undo_stack([UNDO_TYPE_CELL, ix, int(input_labels[ix].text), input_num, lst, mb])
+					input_labels[ix].text = num_str
+				for i in range(N_HORZ): memo_labels[ix][i].text = ""	# メモ数字削除
+				pass
+		update_all_status()
+		sound_effect()
+		pass
+	if event is InputEventKey && event.is_pressed():
+		print(event.as_text())
+		if paused: return
+		##if event.as_text() != "Alt" && hint_showed:
+		##	close_hint()
+		##	return
+		if event.as_text() == "W" :
+			shock_wave_timer = 0.0      # start shock wave
+		var n = int(event.as_text())
+		if n >= 1 && n <= 9:
+			num_button_pressed(n, true)
+	pass
 func num_button_pressed(num : int, button_pressed):
 	print("num = ", num)
 	if in_button_pressed: return		# ボタン押下処理中の場合
