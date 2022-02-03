@@ -138,7 +138,7 @@ func _ready():
 	init_labels()
 	gen_ans()
 	#show_clues()	# 手がかり数字表示
-	#gen_cage()
+	gen_cages()
 	#set_quest(QUEST1)
 	pass # Replace with function body.
 func xyToIX(x, y) -> int: return x + y * N_HORZ
@@ -268,6 +268,33 @@ func print_cells():
 			ix += 1
 		print(lst)
 	print("")
+func gen_cages():
+	#quest_cages = []
+	cage_list = []
+	var ix0 = 0
+	var ix2 = ix0 + 1 if rng.randf_range(0.0, 1.0) < 0.5 else ix0 + N_HORZ
+	cage_list.push_back([0, ix0, ix2])
+	ix0 = N_HORZ - 1
+	ix2 = (ix0 - 1) if rng.randf_range(0.0, 1.0) < 0.5 else ix0 + N_HORZ
+	cage_list.push_back([0, ix0, ix2])
+	ix0 = N_HORZ * (N_VERT - 1)
+	ix2 = (ix0 + 1) if rng.randf_range(0.0, 1.0) < 0.5 else ix0 - N_HORZ
+	cage_list.push_back([0, ix0, ix2])
+	ix0 = N_HORZ * N_VERT - 1
+	ix2 = (ix0 - 1) if rng.randf_range(0.0, 1.0) < 0.5 else ix0 - N_HORZ
+	cage_list.push_back([0, ix0, ix2])
+	for i in range(cage_ix.size()): cage_ix[i] = -1
+	for ix in range(cage_list.size()):
+		var item = cage_list[ix]
+		var sum = 0
+		for k in range(1, item.size()):
+			sum += bit_to_num(cell_bit[item[k]])
+		item[0] = sum
+		cage_labels[item[1]].text = String(sum)
+		for k in range(1, item.size()):
+			cage_ix[item[k]] = ix
+	$Board/CageGrid.cage_ix = cage_ix
+	$Board/CageGrid.update()
 func set_quest(cages):
 	quest_cages = cages
 	##for y in range(N_VERT):
