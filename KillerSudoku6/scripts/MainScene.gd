@@ -115,7 +115,7 @@ var InputLabel = load("res://InputLabel.tscn")
 var MemoLabel = load("res://MemoLabel.tscn")
 
 func _ready():
-	if false:
+	if true:
 		randomize()
 		rng.randomize()
 	else:
@@ -136,10 +136,10 @@ func _ready():
 		num_buttons.push_back(get_node("Button%d" % (i+1)))
 	#
 	init_labels()
-	#gen_ans()
+	gen_ans()
 	#show_clues()	# 手がかり数字表示
 	#gen_cage()
-	set_quest(QUEST1)
+	#set_quest(QUEST1)
 	pass # Replace with function body.
 func xyToIX(x, y) -> int: return x + y * N_HORZ
 func num_to_bit(n : int): return 1 << (n-1) if n != 0 else 0
@@ -210,6 +210,64 @@ func init_candidates():		# cell_bit から各セルの候補数字計算
 					for h in range(3):
 						candidates_bit[xyToIX(x0 + h, y0 + v)] &= ~b
 	pass
+func gen_ans_sub(ix : int, line_used):
+	#print_cells()
+	#print_box_used()
+	var x : int = ix % N_HORZ
+	if x == 0: line_used = 0
+	var x3 = x / 3
+	var y2 = ix / (N_HORZ*2)
+	var bix = y2 * 2 + x3
+	var used = line_used | column_used[x] | box_used[bix]
+	if used == ALL_BITS: return false		# 全数字が使用済み
+	var lst = []
+	var mask = BIT_1
+	for i in range(N_HORZ):
+		if (used & mask) == 0: lst.push_back(mask)		# 数字未使用の場合
+		mask <<= 1
+	if ix == N_CELLS - 1:
+		cell_bit[ix] = lst[0]
+		return true
+	if lst.size() > 1: lst.shuffle()
+	for i in range(lst.size()):
+		cell_bit[ix] = lst[i]
+		column_used[x] |= lst[i]
+		box_used[bix] |= lst[i]
+		if gen_ans_sub(ix+1, line_used | lst[i]): return true
+		column_used[x] &= ~lst[i]
+		box_used[bix] &= ~lst[i]
+	cell_bit[ix] = 0
+	return false;
+func gen_ans():		# 解答生成
+	for i in range(N_CELLS):
+		#clue_labels[i].text = "?"
+		input_labels[i].text = ""
+	for i in range(box_used.size()): box_used[i] = 0
+	for i in range(cell_bit.size()): cell_bit[i] = 0
+	var t = []
+	for i in range(N_HORZ): t.push_back(1<<i)
+	t.shuffle()
+	for i in range(N_HORZ):
+		cell_bit[i] = t[i]
+		column_used[i] = t[i]
+		box_used[i/3] |= t[i]
+	#print(cell_bit)
+	gen_ans_sub(N_HORZ, 0)
+	print_cells()
+	#update_cell_labels()
+	ans_bit = cell_bit.duplicate()
+	#for i in range(N_CELLS): input_labels[i].text = ""		# 入力ラベル全消去
+	for i in range(N_CELLS): input_labels[i].text = bit_to_numstr(cell_bit[i])
+	pass
+func print_cells():
+	var ix = 0
+	for y in range(N_VERT):
+		var lst = []
+		for x in range(N_HORZ):
+			lst.push_back(bit_to_num(cell_bit[ix]))
+			ix += 1
+		print(lst)
+	print("")
 func set_quest(cages):
 	quest_cages = cages
 	##for y in range(N_VERT):
