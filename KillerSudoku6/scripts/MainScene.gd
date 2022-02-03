@@ -161,6 +161,7 @@ func init_labels():
 			# ケージ合計用ラベル
 			var label = CageLabel.instance()
 			cage_labels.push_back(label)
+			label.add_color_override("font_color", Color("#2980b9"))	# VELIZE HOLE
 			label.rect_position = Vector2(px + 4, py + 4)
 			label.text = ""
 			$Board.add_child(label)
