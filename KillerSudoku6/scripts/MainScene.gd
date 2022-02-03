@@ -42,13 +42,14 @@ const TILE_PINK = 3					# 強調カーソル（薄ピンク）
 const COLOR_INCORRECT = Color.red
 const COLOR_DUP = Color.red
 const COLOR_CLUE = Color.black
-const COLOR_INPUT = Color("#2980b9")	# VELIZE HOLE
+#const COLOR_INPUT = Color("#2980b9")	# VELIZE HOLE
+const COLOR_INPUT = Color.black
 
 const CAGE_TABLE = [
 ]
 # 要素：[sum, ix1, ix2, ...]
 const QUEST1 = [ # by wikipeida
-	[5, 0, 1, 6], [7, 2, 3, 4], [11, 5, 11],
+	[8, 0, 1, 6], [7, 2, 3, 4], [11, 5, 11],
 	[12, 6, 7, 12, 13], [3, 8, 14], [9, 9, 15], [7, 10, 16],
 	[7, 12, 18], [6, 17, 23],
 	[12, 19, 24, 25], [11, 20, 21], [6, 22, 28],
@@ -172,7 +173,7 @@ func init_labels():
 			# 入力数字用ラベル
 			label = InputLabel.instance()
 			input_labels.push_back(label)
-			label.rect_position = Vector2(px, py + 2)
+			label.rect_position = Vector2(px+12, py + 8)
 			label.text = ""
 			$Board.add_child(label)
 			# 候補数字用ラベル
