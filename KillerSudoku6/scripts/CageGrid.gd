@@ -4,7 +4,7 @@ const N_VERT = 6
 const N_HORZ = 6
 const N_CELLS = N_HORZ * N_VERT
 const CELL_WIDTH = 81
-const WD = 8
+const WD = 11
 
 var cage_ix = []
 

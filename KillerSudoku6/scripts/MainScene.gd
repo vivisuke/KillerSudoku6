@@ -49,7 +49,7 @@ const CAGE_TABLE = [
 # 要素：[sum, ix1, ix2, ...]
 const QUEST1 = [ # by wikipeida
 	[5, 0, 1, 6], [7, 2, 3, 4], [11, 5, 11],
-	[12, 6, 7, 12], [3, 8, 14], [9, 9, 15], [7, 10, 16],
+	[12, 6, 7, 12, 13], [3, 8, 14], [9, 9, 15], [7, 10, 16],
 	[7, 12, 18], [6, 17, 23],
 	[12, 19, 24, 25], [11, 20, 21], [6, 22, 28],
 	[5, 26, 27], [10, 29, 34, 35],
@@ -160,7 +160,7 @@ func init_labels():
 			# ケージ合計用ラベル
 			var label = CageLabel.instance()
 			cage_labels.push_back(label)
-			label.rect_position = Vector2(px + 1, py + 1)
+			label.rect_position = Vector2(px + 4, py + 4)
 			label.text = ""
 			$Board.add_child(label)
 			# 手がかり数字用ラベル
