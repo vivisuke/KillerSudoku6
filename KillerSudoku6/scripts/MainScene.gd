@@ -47,14 +47,14 @@ const COLOR_INPUT = Color.black
 
 const CAGE_TABLE = [
 ]
-# 要素：[sum, ix1, ix2, ...]
+# 要素：[sum, [ix1, ix2, ...]]
 const QUEST1 = [ # by wikipeida
-	[8, 0, 1, 6], [7, 2, 3, 4], [11, 5, 11],
-	[12, 6, 7, 12, 13], [3, 8, 14], [9, 9, 15], [7, 10, 16],
-	[7, 12, 18], [6, 17, 23],
-	[12, 19, 24, 25], [11, 20, 21], [6, 22, 28],
-	[5, 26, 27], [10, 29, 34, 35],
-	[12, 30, 31, 32, 33],
+	[8, [0, 1, 6]], [7, [2, 3, 4]], [11, [5, 11]],
+	[12, [6, 7, 12, 13]], [3, [8, 14]], [9, [9, 15]], [7, [10, 16]],
+	[7, [12, 18]], [6, [17, 23]],
+	[12, [19, 24, 25]], [11, [20, 21]], [6, [22, 28]],
+	[5, [26, 27]], [10, [29, 34, 35]],
+	[12, [30, 31, 32, 33]],
 ]
 
 var symmetric = true		# 対称形問題
@@ -256,8 +256,8 @@ func gen_ans():		# 解答生成
 	print_cells()
 	#update_cell_labels()
 	ans_bit = cell_bit.duplicate()
-	#for i in range(N_CELLS): input_labels[i].text = ""		# 入力ラベル全消去
-	for i in range(N_CELLS): input_labels[i].text = bit_to_numstr(cell_bit[i])
+	for i in range(N_CELLS): input_labels[i].text = ""		# 入力ラベル全消去
+	#for i in range(N_CELLS): input_labels[i].text = bit_to_numstr(cell_bit[i])
 	pass
 func print_cells():
 	var ix = 0
@@ -273,26 +273,49 @@ func gen_cages():
 	cage_list = []
 	var ix0 = 0
 	var ix2 = ix0 + 1 if rng.randf_range(0.0, 1.0) < 0.5 else ix0 + N_HORZ
-	cage_list.push_back([0, ix0, ix2])
+	cage_list.push_back([0, [ix0, ix2]])
 	ix0 = N_HORZ - 1
 	ix2 = (ix0 - 1) if rng.randf_range(0.0, 1.0) < 0.5 else ix0 + N_HORZ
-	cage_list.push_back([0, ix0, ix2])
+	cage_list.push_back([0, [ix0, ix2]])
 	ix0 = N_HORZ * (N_VERT - 1)
 	ix2 = (ix0 + 1) if rng.randf_range(0.0, 1.0) < 0.5 else ix0 - N_HORZ
-	cage_list.push_back([0, ix0, ix2])
+	cage_list.push_back([0, [ix0, ix2]])
 	ix0 = N_HORZ * N_VERT - 1
 	ix2 = (ix0 - 1) if rng.randf_range(0.0, 1.0) < 0.5 else ix0 - N_HORZ
-	cage_list.push_back([0, ix0, ix2])
+	cage_list.push_back([0, [ix0, ix2]])
 	for i in range(cage_ix.size()): cage_ix[i] = -1
+	for ix in range(cage_list.size()):
+		var lst = cage_list[ix][1]
+		for k in range(lst.size()): cage_ix[lst[k]] = ix
+	var ar = []
+	for ix in range(N_CELLS): ar.push_back(ix)
+	ar.shuffle()
+	#
+	for i in range(ar.size()):
+		var ix = ar[i]
+		if cage_ix[ix] < 0:	# 未分割の場合
+			cage_ix[ix] = cage_list.size()
+			cage_list.push_back([0, [ix]])
+			var x = ix % N_HORZ
+			var y = ix / N_HORZ
+			var lst0 = []	# 空欄リスト
+			if y != 0 && cage_ix[xyToIX(x, y-1)] < 0: lst0.push_back(xyToIX(x, y-1))
+			if x != 0 && cage_ix[xyToIX(x-1, y)] < 0: lst0.push_back(xyToIX(x-1, y))
+			if x != N_HORZ-1 && cage_ix[xyToIX(x+1, y)] < 0: lst0.push_back(xyToIX(x+1, y))
+			if y != N_VERT-1 && cage_ix[xyToIX(x, y+1)] < 0: lst0.push_back(xyToIX(x, y+1))
+			if !lst0.empty():	# ４近傍に未分割セルがある場合
+				var i2 = lst0[0] if lst0.size() == 1 else lst0[rng.randi_range(0, lst0.size() - 1)]
+				cage_list.back()[1].push_back(i2)
+				cage_ix[i2] = cage_list.size() - 1
 	for ix in range(cage_list.size()):
 		var item = cage_list[ix]
 		var sum = 0
-		for k in range(1, item.size()):
-			sum += bit_to_num(cell_bit[item[k]])
+		var lst = item[1]
+		for k in range(lst.size()):
+			sum += bit_to_num(cell_bit[lst[k]])
 		item[0] = sum
-		cage_labels[item[1]].text = String(sum)
-		for k in range(1, item.size()):
-			cage_ix[item[k]] = ix
+		cage_labels[lst.min()].text = String(sum)
+		#for k in range(lst.size()): cage_ix[lst[k]] = ix
 	$Board/CageGrid.cage_ix = cage_ix
 	$Board/CageGrid.update()
 func set_quest(cages):
