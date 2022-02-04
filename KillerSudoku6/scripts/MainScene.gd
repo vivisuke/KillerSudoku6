@@ -271,42 +271,81 @@ func print_cells():
 func gen_cages():
 	#quest_cages = []
 	cage_list = []
-	var ix0 = 0
-	var ix2 = ix0 + 1 if rng.randf_range(0.0, 1.0) < 0.5 else ix0 + N_HORZ
-	cage_list.push_back([0, [ix0, ix2]])
-	ix0 = N_HORZ - 1
-	ix2 = (ix0 - 1) if rng.randf_range(0.0, 1.0) < 0.5 else ix0 + N_HORZ
-	cage_list.push_back([0, [ix0, ix2]])
-	ix0 = N_HORZ * (N_VERT - 1)
-	ix2 = (ix0 + 1) if rng.randf_range(0.0, 1.0) < 0.5 else ix0 - N_HORZ
-	cage_list.push_back([0, [ix0, ix2]])
-	ix0 = N_HORZ * N_VERT - 1
-	ix2 = (ix0 - 1) if rng.randf_range(0.0, 1.0) < 0.5 else ix0 - N_HORZ
-	cage_list.push_back([0, [ix0, ix2]])
+	if rng.randf_range(0.0, 1.0) < 0.5:
+		cage_list.push_back([0, [0, 1]])
+		var ix0 = N_HORZ-1
+		cage_list.push_back([0, [ix0, ix0+N_HORZ]])
+		ix0 = N_HORZ * (N_VERT - 1)
+		cage_list.push_back([0, [ix0, ix0-N_HORZ]])
+		ix0 = N_CELLS - 1
+		cage_list.push_back([0, [ix0, ix0-1]])
+	else:
+		cage_list.push_back([0, [0, N_HORZ]])
+		var ix0 = N_HORZ-1
+		cage_list.push_back([0, [ix0, ix0-1]])
+		ix0 = N_HORZ * (N_VERT - 1)
+		cage_list.push_back([0, [ix0, ix0+1]])
+		ix0 = N_CELLS - 1
+		cage_list.push_back([0, [ix0, ix0-N_HORZ]])
+	#var ix0 = 0
+	#var ix2 = ix0 + 1 if rng.randf_range(0.0, 1.0) < 0.5 else ix0 + N_HORZ
+	#cage_list.push_back([0, [ix0, ix2]])
+	#ix0 = N_HORZ - 1
+	#ix2 = (ix0 - 1) if rng.randf_range(0.0, 1.0) < 0.5 else ix0 + N_HORZ
+	#cage_list.push_back([0, [ix0, ix2]])
+	#ix0 = N_HORZ * (N_VERT - 1)
+	#ix2 = (ix0 + 1) if rng.randf_range(0.0, 1.0) < 0.5 else ix0 - N_HORZ
+	#cage_list.push_back([0, [ix0, ix2]])
+	#ix0 = N_HORZ * N_VERT - 1
+	#ix2 = (ix0 - 1) if rng.randf_range(0.0, 1.0) < 0.5 else ix0 - N_HORZ
+	#cage_list.push_back([0, [ix0, ix2]])
 	for i in range(cage_ix.size()): cage_ix[i] = -1
 	for ix in range(cage_list.size()):
 		var lst = cage_list[ix][1]
 		for k in range(lst.size()): cage_ix[lst[k]] = ix
+	#
 	var ar = []
 	for ix in range(N_CELLS): ar.push_back(ix)
 	ar.shuffle()
-	#
 	for i in range(ar.size()):
 		var ix = ar[i]
 		if cage_ix[ix] < 0:	# 未分割の場合
-			cage_ix[ix] = cage_list.size()
-			cage_list.push_back([0, [ix]])
 			var x = ix % N_HORZ
 			var y = ix / N_HORZ
 			var lst0 = []	# 空欄リスト
-			if y != 0 && cage_ix[xyToIX(x, y-1)] < 0: lst0.push_back(xyToIX(x, y-1))
-			if x != 0 && cage_ix[xyToIX(x-1, y)] < 0: lst0.push_back(xyToIX(x-1, y))
-			if x != N_HORZ-1 && cage_ix[xyToIX(x+1, y)] < 0: lst0.push_back(xyToIX(x+1, y))
-			if y != N_VERT-1 && cage_ix[xyToIX(x, y+1)] < 0: lst0.push_back(xyToIX(x, y+1))
+			var lst1 = []	# １セルケージリスト
+			var lst2 = []	# ２セルケージリスト
+			if y != 0:
+				var i2 = xyToIX(x, y-1)
+				if cage_ix[i2] < 0: lst0.push_back(i2)
+				elif cage_list[cage_ix[i2]][1].size() == 2: lst2.push_back(i2)
+			if x != 0:
+				var i2 = xyToIX(x-1, y)
+				if cage_ix[xyToIX(x-1, y)] < 0: lst0.push_back(xyToIX(x-1, y))
+				elif cage_list[cage_ix[i2]][1].size() == 2: lst2.push_back(i2)
+			if x != N_HORZ-1:
+				var i2 = xyToIX(x+1, y)
+				if cage_ix[xyToIX(x-1, y)] < 0: lst0.push_back(xyToIX(x-1, y))
+				elif cage_list[cage_ix[i2]][1].size() == 2: lst2.push_back(i2)
+			if y != N_VERT-1:
+				var i2 = xyToIX(x, y+1)
+				if cage_ix[xyToIX(x-1, y)] < 0: lst0.push_back(xyToIX(x-1, y))
+				elif cage_list[cage_ix[i2]][1].size() == 2: lst2.push_back(i2)
 			if !lst0.empty():	# ４近傍に未分割セルがある場合
+				cage_ix[ix] = cage_list.size()
+				cage_list.push_back([0, [ix]])
 				var i2 = lst0[0] if lst0.size() == 1 else lst0[rng.randi_range(0, lst0.size() - 1)]
 				cage_list.back()[1].push_back(i2)
 				cage_ix[i2] = cage_list.size() - 1
+			elif !lst2.empty():	# ４近傍に２セルのケージがある場合
+				# ２セルのケージに ix をマージ
+				var i2 = lst2[0] if lst2.size() == 1 else lst2[rng.randi_range(0, lst2.size() - 1)]
+				var lstx = cage_ix[i2]
+				cage_list[lstx][1].push_back(ix)
+				cage_ix[ix] = lstx
+			else:
+				cage_ix[ix] = cage_list.size()
+				cage_list.push_back([0, [ix]])
 	for ix in range(cage_list.size()):
 		var item = cage_list[ix]
 		var sum = 0
