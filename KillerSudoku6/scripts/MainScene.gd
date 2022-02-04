@@ -140,6 +140,7 @@ func _ready():
 	#show_clues()	# 手がかり数字表示
 	gen_cages()
 	#set_quest(QUEST1)
+	is_proper_quest(QUEST1)
 	pass # Replace with function body.
 func xyToIX(x, y) -> int: return x + y * N_HORZ
 func num_to_bit(n : int): return 1 << (n-1) if n != 0 else 0
@@ -360,6 +361,8 @@ func gen_cages():
 		#for k in range(lst.size()): cage_ix[lst[k]] = ix
 	$Board/CageGrid.cage_ix = cage_ix
 	$Board/CageGrid.update()
+func is_proper_quest(cages) -> bool:
+	return true
 func set_quest(cages):
 	quest_cages = cages
 	##for y in range(N_VERT):
@@ -411,6 +414,20 @@ func check_duplicated():
 		else:
 			clue_labels[ix].add_color_override("font_color", COLOR_CLUE)
 			input_labels[ix].add_color_override("font_color", COLOR_INPUT)
+	pass
+func check_cages():		# 必ず check_duplicated() の直後にコールすること
+	for i in range(cage_list.size()):
+		var ixs = cage_list[i][1]
+		var sum = 0
+		for k in range(ixs.size()):
+			var n = get_cell_numer(ixs[k])
+			if n == 0:
+				sum = 0
+				break
+			sum += n
+		if sum != 0 && sum != cage_list[i][0]:
+			for k in range(ixs.size()):
+				input_labels[ixs[k]].add_color_override("font_color", COLOR_DUP)
 	pass
 func update_num_buttons_disabled():		# 使い切った数字ボタンをディセーブル
 	#var nUsed = []		# 各数字の使用数 [0] for EMPTY
@@ -478,6 +495,7 @@ func update_all_status():
 	##update_NEmptyLabel()
 	update_num_buttons_disabled()
 	check_duplicated()
+	check_cages()
 func _input(event):
 	if menuPopuped: return
 	if event is InputEventMouseButton && event.is_pressed():
