@@ -7,6 +7,10 @@ enum {
 	CELL,
 }
 enum {
+	CAGE_SUM = 0,			# ケージ内数字合計
+	CAGE_IX_LIST,			# ケージ内セル位置配列
+}
+enum {
 	#IX_CAGE_COLOR = 0,		# ケージ背景色、0, 1, 2, 3
 	IX_CAGE_TOP_LEFT = 0,	# ケージ左上位置
 	IX_CAGE_N,				# ケージ内数字数
@@ -89,6 +93,7 @@ var cur_num = -1			# 選択されている数字ボタン、-1 for 選択無し
 var cur_cell_ix = -1		# 選択されているセルインデックス、-1 for 選択無し
 var input_num = 0			# 入力された数字
 var nRemoved
+var nAnswer = 0				# 解答数
 
 var cage_labels = []		# ケージ合計数字用ラベル配列
 var clue_labels = []		# 手がかり数字用ラベル配列
@@ -99,6 +104,7 @@ var quest_cages = []		# クエストケージリスト配列、要素：[sum, ix
 var cage_list = []			# ケージリスト配列、要素：IX_CAGE_XXX
 var cage_ix = []			# 各セルのケージリスト配列インデックス
 var candidates_bit = []		# 入力可能ビット論理和
+var line_used = []			# 各行の使用済みビット
 var column_used = []		# 各カラムの使用済みビット
 var box_used = []			# 各3x3ブロックの使用済みビット
 var memo_labels = []		# メモ（候補数字）用ラベル配列（２次元）
@@ -115,7 +121,7 @@ var InputLabel = load("res://InputLabel.tscn")
 var MemoLabel = load("res://MemoLabel.tscn")
 
 func _ready():
-	if true:
+	if false:
 		randomize()
 		rng.randomize()
 	else:
@@ -125,10 +131,10 @@ func _ready():
 	cell_bit.resize(N_CELLS)
 	candidates_bit.resize(N_CELLS)
 	cage_ix.resize(N_CELLS)
+	line_used.resize(N_HORZ)
 	column_used.resize(N_HORZ)
 	box_used.resize(N_HORZ)
 	memo_text.resize(N_CELLS)
-	column_used.resize(N_HORZ)
 	num_used.resize(N_HORZ + 1)		# +1 for 0
 	#
 	num_buttons.push_back($DeleteButton)
@@ -138,12 +144,17 @@ func _ready():
 	init_labels()
 	gen_ans()
 	#show_clues()	# 手がかり数字表示
-	gen_cages()
+	#gen_cages()
 	#set_quest(QUEST1)
-	is_proper_quest(QUEST1)
+	#is_proper_quest()
+	while true:
+		gen_cages()
+		if is_proper_quest():
+			break
+	#
 	pass # Replace with function body.
 func xyToIX(x, y) -> int: return x + y * N_HORZ
-func num_to_bit(n : int): return 1 << (n-1) if n != 0 else 0
+func num_to_bit(n : int): return 1 << (n-1) if n > 0 else 0
 func bit_to_num(b):
 	var mask = 1
 	for i in range(N_HORZ):
@@ -270,6 +281,7 @@ func print_cells():
 		print(lst)
 	print("")
 func gen_cages():
+	for i in range(N_CELLS): cage_labels[i].text = ""
 	#quest_cages = []
 	cage_list = []
 	if rng.randf_range(0.0, 1.0) < 0.5:
@@ -356,13 +368,66 @@ func gen_cages():
 		for k in range(lst.size()):
 			sum += bit_to_num(cell_bit[lst[k]])
 		item[0] = sum
-		print(cage_list[ix])
+		#print(cage_list[ix])
 		cage_labels[lst.min()].text = String(sum)
 		#for k in range(lst.size()): cage_ix[lst[k]] = ix
 	$Board/CageGrid.cage_ix = cage_ix
 	$Board/CageGrid.update()
-func is_proper_quest(cages) -> bool:
-	return true
+# cix: cage_list's index, lix: ix_list's index, ub: used bits in the cage
+func ipq_sub(cix, lix, ub, sum) -> bool:	# false for 解の個数が２以上
+	if cix == cage_list.size():
+		nAnswer += 1
+		print(nAnswer, ":")
+		print_cells()	# cell_bit の内容を表示
+	else:
+		var cage = cage_list[cix]
+		var ix = cage[CAGE_IX_LIST][lix]
+		var x = ix % N_HORZ
+		var y = ix / N_HORZ
+		var x3 = x / 3
+		var y2 = y / 2
+		var bix = y2 * 2 + x3
+		var bits = ~(ub | line_used[y] | column_used[x] | box_used[bix]) & ALL_BITS
+		if !bits: return true		# 配置可能ビット無し
+		if lix == cage[CAGE_IX_LIST].size() - 1:		# 最後のセルの場合
+			var n = cage[CAGE_SUM] - sum
+			var b = num_to_bit(n)
+			if n <= 0 || (bits&b) == 0:
+				return true
+			line_used[y] |= b
+			column_used[x] |= b
+			box_used[bix] |= b
+			cell_bit[ix] = b
+			if !ipq_sub(cix+1, 0, 0, 0):
+				return false
+			line_used[y] ^= b
+			column_used[x] ^= b
+			box_used[bix] ^= b
+		else:	# 最後のセルでない場合
+			while bits != 0:
+				var b = -bits & bits		# 最も小さい１のビット
+				bits ^= b					# b のビットを消去
+				line_used[y] |= b
+				column_used[x] |= b
+				box_used[bix] |= b
+				cell_bit[ix] = b
+				if !ipq_sub(cix, lix+1, (ub | b), sum+bit_to_num(b)):
+					return false
+				line_used[y] ^= b
+				column_used[x] ^= b
+				box_used[bix] ^= b
+		cell_bit[ix] = 0
+	return nAnswer < 2
+# cage_list をチェック、手がかり数字は無し
+func is_proper_quest() -> bool:
+	nAnswer = 0
+	for ix in range(N_CELLS): cell_bit[ix] = 0
+	for ix in range(N_HORZ):
+		line_used[ix] = 0
+		column_used[ix] = 0
+		box_used[ix] = 0
+	ipq_sub(0, 0, 0, 0)
+	return nAnswer == 1
 func set_quest(cages):
 	quest_cages = cages
 	##for y in range(N_VERT):
@@ -503,7 +568,7 @@ func _input(event):
 				return
 		##if paused: return
 		var mp = $Board/TileMap.world_to_map($Board/TileMap.get_local_mouse_position())
-		print(mp)
+		#print(mp)
 		if mp.x < 0 || mp.x >= N_HORZ || mp.y < 0 || mp.y >= N_VERT:
 			return		# 盤面セル以外の場合
 		input_num = -1
@@ -552,7 +617,7 @@ func _input(event):
 		sound_effect()
 		pass
 	if event is InputEventKey && event.is_pressed():
-		print(event.as_text())
+		#print(event.as_text())
 		if paused: return
 		##if event.as_text() != "Alt" && hint_showed:
 		##	close_hint()
@@ -564,7 +629,7 @@ func _input(event):
 			num_button_pressed(n, true)
 	pass
 func num_button_pressed(num : int, button_pressed):
-	print("num = ", num)
+	#print("num = ", num)
 	if in_button_pressed: return		# ボタン押下処理中の場合
 	if paused: return			# ポーズ中
 	in_button_pressed = true
