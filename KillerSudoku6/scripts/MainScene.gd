@@ -121,7 +121,7 @@ var InputLabel = load("res://InputLabel.tscn")
 var MemoLabel = load("res://MemoLabel.tscn")
 
 func _ready():
-	if false:
+	if true:
 		randomize()
 		rng.randomize()
 	else:
@@ -142,12 +142,13 @@ func _ready():
 		num_buttons.push_back(get_node("Button%d" % (i+1)))
 	#
 	init_labels()
-	gen_ans()
+	#gen_ans()
 	#show_clues()	# 手がかり数字表示
 	#gen_cages()
 	#set_quest(QUEST1)
 	#is_proper_quest()
 	while true:
+		gen_ans()
 		gen_cages()
 		if is_proper_quest():
 			break
