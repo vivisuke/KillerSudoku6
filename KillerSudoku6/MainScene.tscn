@@ -445,3 +445,4 @@ stream = ExtResource( 16 )
 [connection signal="toggled" from="Button4" to="." method="_on_Button4_toggled"]
 [connection signal="toggled" from="Button5" to="." method="_on_Button5_toggled"]
 [connection signal="toggled" from="Button6" to="." method="_on_Button6_toggled"]
+[connection signal="toggled" from="DeleteButton" to="." method="_on_DeleteButton_toggled"]

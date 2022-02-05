@@ -645,6 +645,8 @@ func num_button_pressed(num : int, button_pressed):
 	in_button_pressed = false
 	update_all_status()
 	pass
+func _on_DeleteButton_toggled(button_pressed):
+	num_button_pressed(0, button_pressed)
 func _on_Button1_toggled(button_pressed):
 	num_button_pressed(1, button_pressed)
 func _on_Button2_toggled(button_pressed):
