@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=2]
+[gd_scene load_steps=46 format=2]
 
 [ext_resource path="res://images/leftward_white.png" type="Texture" id=1]
 [ext_resource path="res://images/leftward_black.png" type="Texture" id=2]
@@ -25,6 +25,12 @@
 [ext_resource path="res://images/undo_white.png" type="Texture" id=23]
 [ext_resource path="res://images/redo_white.png" type="Texture" id=24]
 [ext_resource path="res://images/redo_black.png" type="Texture" id=25]
+[ext_resource path="res://images/done_white.png" type="Texture" id=26]
+[ext_resource path="res://images/lightbulb_gray.png" type="Texture" id=27]
+[ext_resource path="res://images/lightbulb_white.png" type="Texture" id=28]
+[ext_resource path="res://images/lightbulb_gold.png" type="Texture" id=29]
+[ext_resource path="res://images/done_gold.png" type="Texture" id=30]
+[ext_resource path="res://images/done_gray.png" type="Texture" id=31]
 
 [sub_resource type="DynamicFont" id=1]
 size = 20
@@ -157,6 +163,10 @@ size = 12
 font_data = ExtResource( 3 )
 
 [sub_resource type="DynamicFont" id=13]
+size = 12
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=14]
 size = 12
 font_data = ExtResource( 3 )
 
@@ -492,6 +502,55 @@ margin_bottom = 67.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 13 )
 text = "進める"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CheckButton" type="TextureButton" parent="."]
+margin_left = 14.0
+margin_top = 685.0
+margin_right = 62.0
+margin_bottom = 733.0
+texture_normal = ExtResource( 30 )
+texture_pressed = ExtResource( 26 )
+texture_disabled = ExtResource( 31 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="CheckButton"]
+margin_left = -8.0
+margin_top = 48.0
+margin_right = 56.0
+margin_bottom = 67.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 14 )
+text = "チェック"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HintButton" type="TextureButton" parent="."]
+margin_left = 77.0
+margin_top = 685.0
+margin_right = 125.0
+margin_bottom = 733.0
+texture_normal = ExtResource( 29 )
+texture_pressed = ExtResource( 28 )
+texture_disabled = ExtResource( 27 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="HintButton"]
+margin_top = 48.0
+margin_right = 48.0
+margin_bottom = 67.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 14 )
+text = "ヒント"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
