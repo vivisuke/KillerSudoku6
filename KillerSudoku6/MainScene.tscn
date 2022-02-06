@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=2]
+[gd_scene load_steps=39 format=2]
 
 [ext_resource path="res://images/leftward_white.png" type="Texture" id=1]
 [ext_resource path="res://images/leftward_black.png" type="Texture" id=2]
@@ -19,6 +19,12 @@
 [ext_resource path="res://sounds/button-3.mp3" type="AudioStream" id=17]
 [ext_resource path="res://sounds/don.mp3" type="AudioStream" id=18]
 [ext_resource path="res://scripts/Board.gd" type="Script" id=19]
+[ext_resource path="res://images/undo_black.png" type="Texture" id=20]
+[ext_resource path="res://images/undo_gray.png" type="Texture" id=21]
+[ext_resource path="res://images/redo_gray.png" type="Texture" id=22]
+[ext_resource path="res://images/undo_white.png" type="Texture" id=23]
+[ext_resource path="res://images/redo_white.png" type="Texture" id=24]
+[ext_resource path="res://images/redo_black.png" type="Texture" id=25]
 
 [sub_resource type="DynamicFont" id=1]
 size = 20
@@ -147,6 +153,10 @@ corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
 [sub_resource type="DynamicFont" id=12]
+size = 12
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=13]
 size = 12
 font_data = ExtResource( 3 )
 
@@ -438,6 +448,54 @@ stream = ExtResource( 18 )
 
 [node name="AudioSolved" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource( 16 )
+
+[node name="UndoButton" type="TextureButton" parent="."]
+margin_left = 14.0
+margin_top = 605.0
+margin_right = 62.0
+margin_bottom = 653.0
+texture_normal = ExtResource( 20 )
+texture_pressed = ExtResource( 23 )
+texture_disabled = ExtResource( 21 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="UndoButton"]
+margin_top = 48.0
+margin_right = 48.0
+margin_bottom = 67.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 13 )
+text = "戻す"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RedoButton" type="TextureButton" parent="."]
+margin_left = 77.0
+margin_top = 605.0
+margin_right = 125.0
+margin_bottom = 653.0
+texture_normal = ExtResource( 25 )
+texture_pressed = ExtResource( 24 )
+texture_disabled = ExtResource( 22 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="RedoButton"]
+margin_top = 48.0
+margin_right = 48.0
+margin_bottom = 67.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 13 )
+text = "進める"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [connection signal="toggled" from="Button1" to="." method="_on_Button1_toggled"]
 [connection signal="toggled" from="Button2" to="." method="_on_Button2_toggled"]

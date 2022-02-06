@@ -150,6 +150,8 @@ func _ready():
 	while true:
 		gen_ans()
 		gen_cages()
+		#gen_cages_3x2()		# 3x2 単位で分割
+		#break
 		if is_proper_quest():
 			break
 	#
@@ -281,6 +283,28 @@ func print_cells():
 			ix += 1
 		print(lst)
 	print("")
+func gen_cages_3x2():
+	for i in range(N_CELLS): cage_labels[i].text = ""
+	cage_list = []
+	for y in range(0, N_VERT, N_VERT/3):
+		for x in range(0, N_HORZ, N_HORZ/2):
+			var ix = xyToIX(x, y)
+			if rng.randf_range(0.0, 1.0) < 0.5:
+				# 縦＋横*2行
+				cage_list.push_back([0, [ix, ix+N_HORZ]])
+				cage_list.push_back([0, [ix+1, ix+2]])
+				cage_list.push_back([0, [ix+N_HORZ+1, ix+N_HORZ+2]])
+			else:
+				# 横*2行＋縦
+				cage_list.push_back([0, [ix, ix+1]])
+				cage_list.push_back([0, [ix+N_HORZ, ix+N_HORZ+1]])
+				cage_list.push_back([0, [ix+2, ix+N_HORZ+2]])
+	for i in range(cage_ix.size()): cage_ix[i] = -1
+	for ix in range(cage_list.size()):
+		var lst = cage_list[ix][1]
+		for k in range(lst.size()): cage_ix[lst[k]] = ix
+	$Board/CageGrid.cage_ix = cage_ix
+	$Board/CageGrid.update()
 func gen_cages():
 	for i in range(N_CELLS): cage_labels[i].text = ""
 	#quest_cages = []
