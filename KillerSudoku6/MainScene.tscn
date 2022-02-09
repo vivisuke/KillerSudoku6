@@ -568,3 +568,4 @@ __meta__ = {
 [connection signal="toggled" from="Button5" to="." method="_on_Button5_toggled"]
 [connection signal="toggled" from="Button6" to="." method="_on_Button6_toggled"]
 [connection signal="toggled" from="DeleteButton" to="." method="_on_DeleteButton_toggled"]
+[connection signal="pressed" from="DeselectButton" to="." method="_on_DeselectButton_pressed"]

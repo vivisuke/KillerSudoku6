@@ -829,3 +829,11 @@ func _on_Button5_toggled(button_pressed):
 	num_button_pressed(5, button_pressed)
 func _on_Button6_toggled(button_pressed):
 	num_button_pressed(6, button_pressed)
+
+func _on_DeselectButton_pressed():
+	if paused: return		# ポーズ中
+	cur_cell_ix = -1
+	update_cell_cursor(0)
+	#cur_num = -1
+	set_num_cursor(-1)
+	update_all_status()
