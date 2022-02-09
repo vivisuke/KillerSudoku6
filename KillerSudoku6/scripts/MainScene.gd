@@ -610,6 +610,8 @@ func _process(delta):
 	pass
 func on_solved():
 	solvedStat = true
+	if sound:
+		$AudioSolved.play()		# （どんっ）効果音再生
 	pass
 func _input(event):
 	if menuPopuped: return
