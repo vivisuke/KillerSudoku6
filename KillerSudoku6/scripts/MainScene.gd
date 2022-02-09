@@ -64,7 +64,7 @@ const QUEST1 = [ # by wikipeida
 var qix                 	# 問題番号 [0, N]
 var qID                 	# 問題ID
 var qSolved = false     	# 現問題をクリア済みか？
-var qSolvedStat = false     # 現問題をクリア状態か？
+#var qSolvedStat = false     # 現問題をクリア状態か？
 var elapsedTime = 0.0   	# 経過時間（単位：秒）
 var symmetric = true		# 対称形問題
 var qCreating = false		# 問題生成中
@@ -88,7 +88,7 @@ var hint_texts = []			# ヒントテキスト配列
 #var restarted = false
 var saved_time
 var nEmpty = 0				# 空欄数
-var nDuplicated = 0			# 重複数字数
+var nDuplicated = 0			# 重複、合計不正数字数
 #var optGrade = -1			# 問題グレード、0: 入門、1:初級、2:ノーマル（初中級）
 var diffculty = 0			# 難易度、フルハウス: 1, 隠れたシングル: 2, 裸のシングル: 10pnt？
 var num_buttons = []		# 各数字ボタンリスト [0] -> 削除ボタン、[1] -> Button1, ...
@@ -520,6 +520,7 @@ func check_cages():		# 必ず check_duplicated() の直後にコールするこ�
 				break
 			sum += n
 		if sum != 0 && sum != cage_list[i][0]:
+			nDuplicated += 1
 			for k in range(ixs.size()):
 				input_labels[ixs[k]].add_color_override("font_color", COLOR_DUP)
 	pass
@@ -590,8 +591,15 @@ func update_all_status():
 	update_num_buttons_disabled()
 	check_duplicated()
 	check_cages()
+func update_nEmpty():
+	nEmpty = 0
+	for ix in range(N_CELLS):
+		if get_cell_numer(ix) == 0: nEmpty += 1
+func is_solved():
+	update_nEmpty()
+	return nEmpty == 0 && nDuplicated == 0
 func _process(delta):
-	if !qSolvedStat:
+	if !solvedStat:
 		elapsedTime += delta
 		var sec = int(elapsedTime)
 		var h = sec / (60*60)
@@ -599,6 +607,9 @@ func _process(delta):
 		var m = sec / 60
 		sec -= m * 60
 		$TimeLabel.text = "%02d:%02d:%02d" % [h, m, sec]
+	pass
+func on_solved():
+	solvedStat = true
 	pass
 func _input(event):
 	if menuPopuped: return
@@ -654,7 +665,8 @@ func _input(event):
 				pass
 		update_all_status()
 		sound_effect()
-		pass
+		if !solvedStat && is_solved():
+			on_solved()
 	if event is InputEventKey && event.is_pressed():
 		#print(event.as_text())
 		if paused: return
