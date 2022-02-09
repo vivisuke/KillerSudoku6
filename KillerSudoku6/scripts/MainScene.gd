@@ -541,7 +541,17 @@ func clear_cell_cursor():
 	for y in range(N_VERT):
 		for x in range(N_HORZ):
 			$Board/TileMap.set_cell(x, y, TILE_NONE)
+func reset_TileMap():
+	for y in range(N_VERT):
+		for x in range(N_HORZ):
+			$Board/TileMap.set_cell(x, y, TILE_NONE)
 func do_emphasize(ix : int, type, fullhouse):
+	reset_TileMap()
+	if paused: return
+	var x = ix % N_HORZ
+	var y = ix / N_HORZ
+	if type == CELL || fullhouse:
+		$Board/TileMap.set_cell(x, y, TILE_CURSOR)
 	pass
 func add_falling_char(num_str, ix : int):
 	pass
