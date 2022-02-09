@@ -533,7 +533,7 @@ func update_num_buttons_disabled():		# 使い切った数字ボタンをディ�
 		num_buttons[i+1].disabled = num_used[i+1] >= N_HORZ
 func sound_effect():
 	if sound:
-		if input_num > 0 && num_used[input_num] >= 9:
+		if input_num > 0 && num_used[input_num] >= N_HORZ:
 			$AudioNumCompleted.play()
 		else:
 			$AudioNumClicked.play()
