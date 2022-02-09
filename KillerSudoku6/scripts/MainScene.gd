@@ -61,6 +61,11 @@ const QUEST1 = [ # by wikipeida
 	[12, [30, 31, 32, 33]],
 ]
 
+var qix                 	# 問題番号 [0, N]
+var qID                 	# 問題ID
+var qSolved = false     	# 現問題をクリア済みか？
+var qSolvedStat = false     # 現問題をクリア状態か？
+var elapsedTime = 0.0   	# 経過時間（単位：秒）
 var symmetric = true		# 対称形問題
 var qCreating = false		# 問題生成中
 var solvedStat = false		# クリア済み状態
@@ -81,7 +86,6 @@ var hint_numstr				# ヒントで確定する数字、[1, 9]
 var hint_ix = 0				# 0, 1, 2, ...
 var hint_texts = []			# ヒントテキスト配列
 #var restarted = false
-#var elapsedTime = 0.0   	# 経過時間（単位：秒）
 var saved_time
 var nEmpty = 0				# 空欄数
 var nDuplicated = 0			# 重複数字数
@@ -586,6 +590,16 @@ func update_all_status():
 	update_num_buttons_disabled()
 	check_duplicated()
 	check_cages()
+func _process(delta):
+	if !qSolvedStat:
+		elapsedTime += delta
+		var sec = int(elapsedTime)
+		var h = sec / (60*60)
+		sec -= h * (60*60)
+		var m = sec / 60
+		sec -= m * 60
+		$TimeLabel.text = "%02d:%02d:%02d" % [h, m, sec]
+	pass
 func _input(event):
 	if menuPopuped: return
 	if event is InputEventMouseButton && event.is_pressed():
