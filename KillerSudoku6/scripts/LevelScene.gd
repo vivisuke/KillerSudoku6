@@ -36,3 +36,6 @@ func _ready():
 
 func _on_BackButton_pressed():
 	get_tree().change_scene("res://TopScene.tscn")
+func _on_QuestButton_pressed(num):
+	g.qNumber = num
+	get_tree().change_scene("res://MainScene.tscn")
