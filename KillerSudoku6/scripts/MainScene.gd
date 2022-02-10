@@ -839,3 +839,7 @@ func _on_DeselectButton_pressed():
 	#cur_num = -1
 	set_num_cursor(-1)
 	update_all_status()
+
+
+func _on_NextButton_pressed():
+	pass # Replace with function body.
