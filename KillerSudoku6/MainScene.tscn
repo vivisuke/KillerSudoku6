@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=2]
+[gd_scene load_steps=53 format=2]
 
 [ext_resource path="res://images/leftward_white.png" type="Texture" id=1]
 [ext_resource path="res://images/leftward_black.png" type="Texture" id=2]
@@ -32,6 +32,9 @@
 [ext_resource path="res://images/done_gold.png" type="Texture" id=30]
 [ext_resource path="res://images/done_gray.png" type="Texture" id=31]
 [ext_resource path="res://fonts/arial.ttf" type="DynamicFontData" id=32]
+[ext_resource path="res://images/skip_next_black.png" type="Texture" id=33]
+[ext_resource path="res://images/skip_next_white.png" type="Texture" id=34]
+[ext_resource path="res://images/skip_next_gray.png" type="Texture" id=35]
 
 [sub_resource type="DynamicFont" id=1]
 size = 20
@@ -135,6 +138,10 @@ size = 12
 font_data = ExtResource( 3 )
 
 [sub_resource type="DynamicFont" id=17]
+size = 12
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=18]
 size = 12
 font_data = ExtResource( 3 )
 
@@ -556,6 +563,30 @@ margin_bottom = 67.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 17 )
 text = "選択解除"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NextButton" type="TextureButton" parent="."]
+margin_left = 435.0
+margin_top = 765.0
+margin_right = 483.0
+margin_bottom = 813.0
+texture_normal = ExtResource( 33 )
+texture_pressed = ExtResource( 34 )
+texture_disabled = ExtResource( 35 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="NextButton"]
+margin_top = 48.0
+margin_right = 48.0
+margin_bottom = 67.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 18 )
+text = "次問題"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
