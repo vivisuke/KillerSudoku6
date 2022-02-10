@@ -136,6 +136,8 @@ var ClueLabel = load("res://ClueLabel.tscn")
 var InputLabel = load("res://InputLabel.tscn")
 var MemoLabel = load("res://MemoLabel.tscn")
 
+onready var g = get_node("/root/Global")
+
 func _ready():
 	if true:
 		randomize()
