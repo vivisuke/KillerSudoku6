@@ -139,6 +139,8 @@ var MemoLabel = load("res://MemoLabel.tscn")
 onready var g = get_node("/root/Global")
 
 func _ready():
+	if g.qNumber != 0:
+		g.qName = "%06d" % g.qNumber
 	var stxt = g.qName+String(g.qLevel)
 	if g.qNumber != 0: stxt += "Q"
 	seed(stxt.hash())
@@ -371,8 +373,8 @@ func gen_cages():
 	for i in range(ar.size()):
 		var ix = ar[i]
 		if cage_ix[ix] < 0:	# 未分割の場合
-			if false:
-			#if g.qLevel == 0 && i >= ar.size() - N_HORZ*2:
+			#if false:
+			if g.qLevel == 0 && i >= ar.size() - N_HORZ*2:
 				cage_ix[ix] = cage_list.size()
 				cage_list.push_back([0, [ix]])
 			else:
@@ -663,7 +665,28 @@ func on_solved():
 	solvedStat = true
 	if sound:
 		$AudioSolved.play()		# （どんっ）効果音再生
-	pass
+	var ix = g.qLevel
+	if g.todaysQuest:		# 今日の問題の場合
+		pass
+	else:	# 今日の問題でない場合
+		if g.qNumber != 0:		# 問題集の場合
+			if g.nSolved[g.qLevel] == g.qNumber - 1:	
+				g.nSolved[g.qLevel] += 1
+				g.save_nSolved()
+				$NextButton.disabled = false
+			ix += 3		# for 統計情報
+		if g.stats[ix].has("NSolved"):
+			g.stats[ix]["NSolved"] += 1
+		else:
+			g.stats[ix]["NSolved"] = 1
+		if g.stats[ix].has("TotalSec"):
+			g.stats[ix]["TotalSec"] += int(g.elapsedTime)
+		else:
+			g.stats[ix]["TotalSec"] = int(g.elapsedTime)
+		if !g.stats[ix].has("BestTime") || int(g.elapsedTime) < g.stats[ix]["BestTime"]:
+			g.stats[ix]["BestTime"] = int(g.elapsedTime)
+		g.save_stats()
+	update_all_status()
 func remove_all_memo_at(ix):
 	for i in range(N_HORZ):
 		if memo_labels[ix][i].text != "":

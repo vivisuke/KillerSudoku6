@@ -4,6 +4,7 @@ var buttons = []
 onready var g = get_node("/root/Global")
 
 func _ready():
+	g.load_stats()
 	pass # Replace with function body.
 
 
