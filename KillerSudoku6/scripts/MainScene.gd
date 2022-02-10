@@ -164,18 +164,19 @@ func _ready():
 		num_buttons.push_back(get_node("Button%d" % (i+1)))
 	#
 	init_labels()
-	#gen_ans()
+	#gen_ans()		# 答え生成
 	#show_clues()	# 手がかり数字表示
-	#gen_cages()
+	#gen_cages()		# ケージ生成
 	#set_quest(QUEST1)
 	#is_proper_quest()
-	while true:
-		gen_ans()
-		gen_cages()
-		#gen_cages_3x2()		# 3x2 単位で分割
-		#break
-		if is_proper_quest():
-			break
+	if true:
+		while true:
+			gen_ans()
+			gen_cages()
+			#gen_cages_3x2()		# 3x2 単位で分割
+			#break
+			if is_proper_quest():
+				break
 	#
 	pass # Replace with function body.
 func xyToIX(x, y) -> int: return x + y * N_HORZ
@@ -370,44 +371,49 @@ func gen_cages():
 	for i in range(ar.size()):
 		var ix = ar[i]
 		if cage_ix[ix] < 0:	# 未分割の場合
-			var x = ix % N_HORZ
-			var y = ix / N_HORZ
-			var lst0 = []	# 空欄リスト
-			var lst1 = []	# １セルケージリスト
-			var lst2 = []	# ２セルケージリスト
-			if y != 0:
-				var i2 = xyToIX(x, y-1)
-				if cage_ix[i2] < 0: lst0.push_back(i2)
-				elif cage_list[cage_ix[i2]][1].size() == 2: lst2.push_back(i2)
-			if x != 0:
-				var i2 = xyToIX(x-1, y)
-				if cage_ix[i2] < 0: lst0.push_back(i2)
-				elif cage_list[cage_ix[i2]][1].size() == 2: lst2.push_back(i2)
-			if x != N_HORZ-1:
-				var i2 = xyToIX(x+1, y)
-				if cage_ix[i2] < 0: lst0.push_back(i2)
-				elif cage_list[cage_ix[i2]][1].size() == 2: lst2.push_back(i2)
-			if y != N_VERT-1:
-				var i2 = xyToIX(x, y+1)
-				if cage_ix[i2] < 0: lst0.push_back(i2)
-				elif cage_list[cage_ix[i2]][1].size() == 2: lst2.push_back(i2)
-			#if ix == 13 || ix == 14:
-			#	print("ix = ", ix)
-			if !lst0.empty():	# ４近傍に未分割セルがある場合
-				var ix2 = lst0[0] if lst0.size() == 1 else lst0[rng.randi_range(0, lst0.size() - 1)]
-				#cage_list.back()[1].push_back(i2)
-				cage_ix[ix] = cage_list.size()
-				cage_ix[ix2] = cage_list.size()
-				cage_list.push_back([0, [ix, ix2]])
-			elif !lst2.empty():	# ４近傍に２セルのケージがある場合
-				# ２セルのケージに ix をマージ
-				var i2 = lst2[0] if lst2.size() == 1 else lst2[rng.randi_range(0, lst2.size() - 1)]
-				var lstx = cage_ix[i2]
-				cage_list[lstx][1].push_back(ix)
-				cage_ix[ix] = lstx
-			else:
+			if false:
+			#if g.qLevel == 0 && i >= ar.size() - N_HORZ*2:
 				cage_ix[ix] = cage_list.size()
 				cage_list.push_back([0, [ix]])
+			else:
+				var x = ix % N_HORZ
+				var y = ix / N_HORZ
+				var lst0 = []	# 空欄リスト
+				var lst1 = []	# １セルケージリスト
+				var lst2 = []	# ２セルケージリスト
+				if y != 0:
+					var i2 = xyToIX(x, y-1)
+					if cage_ix[i2] < 0: lst0.push_back(i2)
+					elif cage_list[cage_ix[i2]][1].size() == 2: lst2.push_back(i2)
+				if x != 0:
+					var i2 = xyToIX(x-1, y)
+					if cage_ix[i2] < 0: lst0.push_back(i2)
+					elif cage_list[cage_ix[i2]][1].size() == 2: lst2.push_back(i2)
+				if x != N_HORZ-1:
+					var i2 = xyToIX(x+1, y)
+					if cage_ix[i2] < 0: lst0.push_back(i2)
+					elif cage_list[cage_ix[i2]][1].size() == 2: lst2.push_back(i2)
+				if y != N_VERT-1:
+					var i2 = xyToIX(x, y+1)
+					if cage_ix[i2] < 0: lst0.push_back(i2)
+					elif cage_list[cage_ix[i2]][1].size() == 2: lst2.push_back(i2)
+				#if ix == 13 || ix == 14:
+				#	print("ix = ", ix)
+				if !lst0.empty():	# ４近傍に未分割セルがある場合
+					var ix2 = lst0[0] if lst0.size() == 1 else lst0[rng.randi_range(0, lst0.size() - 1)]
+					#cage_list.back()[1].push_back(i2)
+					cage_ix[ix] = cage_list.size()
+					cage_ix[ix2] = cage_list.size()
+					cage_list.push_back([0, [ix, ix2]])
+				elif !lst2.empty():	# ４近傍に２セルのケージがある場合
+					# ２セルのケージに ix をマージ
+					var i2 = lst2[0] if lst2.size() == 1 else lst2[rng.randi_range(0, lst2.size() - 1)]
+					var lstx = cage_ix[i2]
+					cage_list[lstx][1].push_back(ix)
+					cage_ix[ix] = lstx
+				else:
+					cage_ix[ix] = cage_list.size()
+					cage_list.push_back([0, [ix]])
 	for ix in range(cage_list.size()):
 		var item = cage_list[ix]
 		var sum = 0
@@ -428,6 +434,8 @@ func ipq_sub(cix, lix, ub, sum) -> bool:	# false for 解の個数が２以上
 		print_cells()	# cell_bit の内容を表示
 	else:
 		var cage = cage_list[cix]
+		if cage[CAGE_IX_LIST].size() == 1:
+			print("cage[CAGE_IX_LIST].size() == 1")
 		var ix = cage[CAGE_IX_LIST][lix]
 		var x = ix % N_HORZ
 		var y = ix / N_HORZ
