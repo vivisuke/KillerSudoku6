@@ -139,13 +139,17 @@ var MemoLabel = load("res://MemoLabel.tscn")
 onready var g = get_node("/root/Global")
 
 func _ready():
-	if true:
-		randomize()
-		rng.randomize()
-	else:
-		var sd = 2
-		seed(sd)
-		rng.set_seed(sd)
+	var stxt = g.qName+String(g.qLevel)
+	if g.qNumber != 0: stxt += "Q"
+	seed(stxt.hash())
+	rng.set_seed(stxt.hash())
+	#if true:
+	#	randomize()
+	#	rng.randomize()
+	#else:
+	#	var sd = 2
+	#	seed(sd)
+	#	rng.set_seed(sd)
 	cell_bit.resize(N_CELLS)
 	candidates_bit.resize(N_CELLS)
 	cage_ix.resize(N_CELLS)
