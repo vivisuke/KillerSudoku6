@@ -843,3 +843,13 @@ func _on_DeselectButton_pressed():
 
 func _on_NextButton_pressed():
 	pass # Replace with function body.
+
+
+func _on_BackButton_pressed():
+	g.auto_save(false, [])
+	if g.todaysQuest:
+		get_tree().change_scene("res://TodaysQuest.tscn")
+	elif g.qNumber == 0:
+		get_tree().change_scene("res://TopScene.tscn")
+	else:
+		get_tree().change_scene("res://LevelScene.tscn")
