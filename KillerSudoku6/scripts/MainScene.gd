@@ -149,6 +149,7 @@ func _ready():
 	seed(stxt.hash())
 	rng.set_seed(stxt.hash())
 	$TitleBar/Label.text = titleText()
+	$NextButton.disabled = true
 	#if true:
 	#	randomize()
 	#	rng.randomize()
