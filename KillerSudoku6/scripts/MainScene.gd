@@ -80,7 +80,7 @@ var qix                 	# 問題番号 [0, N]
 var qID                 	# 問題ID
 var qSolved = false     	# 現問題をクリア済みか？
 #var qSolvedStat = false     # 現問題をクリア状態か？
-var elapsedTime = 0.0   	# 経過時間（単位：秒）
+#var elapsedTime = 0.0   	# 経過時間（単位：秒）
 var symmetric = true		# 対称形問題
 var qCreating = false		# 問題生成中
 var solvedStat = false		# クリア済み状態
@@ -184,6 +184,7 @@ func _ready():
 			#break
 			if is_proper_quest():
 				break
+	g.elapsedTime = 0.0
 	#
 	pass # Replace with function body.
 func classText() -> String:
@@ -685,6 +686,7 @@ func update_all_status():
 	if solvedStat:
 		var six = g.qLevel if g.qNumber == 0 else g.qLevel + 3
 		var n = g.stats[six]["NSolved"]
+		print("TotalSec = ", g.stats[six]["TotalSec"])
 		var avg : int = int(g.stats[six]["TotalSec"] / n)
 		var txt = g.sec_to_MSStr(avg)
 		var bst = g.sec_to_MSStr(g.stats[six]["BestTime"])
@@ -706,8 +708,8 @@ func is_solved():
 	return nEmpty == 0 && nDuplicated == 0
 func _process(delta):
 	if !solvedStat:
-		elapsedTime += delta
-		var sec = int(elapsedTime)
+		g.elapsedTime += delta
+		var sec = int(g.elapsedTime)
 		var h = sec / (60*60)
 		sec -= h * (60*60)
 		var m = sec / 60
@@ -718,7 +720,7 @@ func on_solved():
 	solvedStat = true
 	if sound:
 		$AudioSolved.play()		# （どんっ）効果音再生
-	var ix = g.qLevel
+	var six = g.qLevel		# g.stat インデックス
 	if g.todaysQuest:		# 今日の問題の場合
 		pass
 	else:	# 今日の問題でない場合
@@ -727,17 +729,18 @@ func on_solved():
 				g.nSolved[g.qLevel] += 1
 				g.save_nSolved()
 				$NextButton.disabled = false
-			ix += 3		# for 統計情報
-		if g.stats[ix].has("NSolved"):
-			g.stats[ix]["NSolved"] += 1
+			six += 3		# for 統計情報
+		if g.stats[six].has("NSolved"):
+			g.stats[six]["NSolved"] += 1
 		else:
-			g.stats[ix]["NSolved"] = 1
-		if g.stats[ix].has("TotalSec"):
-			g.stats[ix]["TotalSec"] += int(g.elapsedTime)
+			g.stats[six]["NSolved"] = 1
+		if g.stats[six].has("TotalSec"):
+			print("TotalSec = ", g.stats[six]["TotalSec"])
+			g.stats[six]["TotalSec"] += int(g.elapsedTime)
 		else:
-			g.stats[ix]["TotalSec"] = int(g.elapsedTime)
-		if !g.stats[ix].has("BestTime") || int(g.elapsedTime) < g.stats[ix]["BestTime"]:
-			g.stats[ix]["BestTime"] = int(g.elapsedTime)
+			g.stats[six]["TotalSec"] = int(g.elapsedTime)
+		if !g.stats[six].has("BestTime") || int(g.elapsedTime) < g.stats[six]["BestTime"]:
+			g.stats[six]["BestTime"] = int(g.elapsedTime)
 		g.save_stats()
 	update_all_status()
 func remove_all_memo_at(ix):
