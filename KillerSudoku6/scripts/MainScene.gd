@@ -60,6 +60,9 @@ const UNDO_ITEM_NEW = 3			# for セル数字
 const UNDO_ITEM_MEMOIX = 4		# メモ数字反転位置リスト
 const UNDO_ITEM_MEMO = 5		# 数字を入れた位置のメモ数字（ビット値）
 const UNDO_ITEM_MEMO_LST = 1
+const LVL_BEGINNER = 0
+const LVL_EASY = 1
+const LVL_NORMAL = 2
 
 const CAGE_TABLE = [
 ]
@@ -145,6 +148,7 @@ func _ready():
 	if g.qNumber != 0: stxt += "Q"
 	seed(stxt.hash())
 	rng.set_seed(stxt.hash())
+	$TitleBar/Label.text = titleText()
 	#if true:
 	#	randomize()
 	#	rng.randomize()
@@ -181,6 +185,15 @@ func _ready():
 				break
 	#
 	pass # Replace with function body.
+func classText() -> String:
+	if g.qLevel == LVL_BEGINNER: return "【入門】"
+	elif g.qLevel == 1: return "【初級】"
+	elif g.qLevel == 2: return "【初中級】"
+	return ""
+func titleText() -> String:
+	var tt = classText()
+	#elif g.qLevel == LVL_NOT_SYMMETRIC: tt = "【非対称】"
+	return tt + "“" + g.qName + "”"
 func xyToIX(x, y) -> int: return x + y * N_HORZ
 func num_to_bit(n : int): return 1 << (n-1) if n > 0 else 0
 func bit_to_num(b):
@@ -330,6 +343,28 @@ func gen_cages_3x2():
 		for k in range(lst.size()): cage_ix[lst[k]] = ix
 	$Board/CageGrid.cage_ix = cage_ix
 	$Board/CageGrid.update()
+func sel_from_lst(ix, lst):		# lst からひとつを選ぶ
+	if g.qLevel != LVL_NORMAL:
+		return lst[rng.randi_range(0, lst.size() - 1)]
+	var n = get_cell_numer(ix)
+	if n <= 3:		# 3以下の場合は、最大のものを選ぶ
+		var mx = 0
+		var mxi = 0
+		for i in range(lst.size()):
+			var n2 = get_cell_numer(lst[i])
+			if n2 > mx:
+				mx = n2
+				mxi = i
+		return lst[mxi]
+	else:		# 4以上の場合は、最小のものを選ぶ
+		var mn = N_HORZ + 1
+		var mni = 0
+		for i in range(lst.size()):
+			var n2 = get_cell_numer(lst[i])
+			if n2 < mn:
+				mn = n2
+				mni = i
+		return lst[mni]
 func gen_cages():
 	for i in range(N_CELLS): cage_labels[i].text = ""
 	#quest_cages = []
@@ -374,7 +409,8 @@ func gen_cages():
 		var ix = ar[i]
 		if cage_ix[ix] < 0:	# 未分割の場合
 			#if false:
-			if g.qLevel == 0 && i >= ar.size() - N_HORZ*2:
+			if g.qLevel == 0 && i >= ar.size() - N_HORZ*2.2:
+			#if g.qLevel == 0 && rng.randf_range(0.0, 1.0) < 0.1:
 				cage_ix[ix] = cage_list.size()
 				cage_list.push_back([0, [ix]])
 			else:
@@ -402,7 +438,8 @@ func gen_cages():
 				#if ix == 13 || ix == 14:
 				#	print("ix = ", ix)
 				if !lst0.empty():	# ４近傍に未分割セルがある場合
-					var ix2 = lst0[0] if lst0.size() == 1 else lst0[rng.randi_range(0, lst0.size() - 1)]
+					#var ix2 = lst0[0] if lst0.size() == 1 else lst0[rng.randi_range(0, lst0.size() - 1)]
+					var ix2 = lst0[0] if lst0.size() == 1 else sel_from_lst(ix, lst0)
 					#cage_list.back()[1].push_back(i2)
 					cage_ix[ix] = cage_list.size()
 					cage_ix[ix2] = cage_list.size()
