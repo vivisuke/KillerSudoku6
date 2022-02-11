@@ -675,7 +675,7 @@ func set_num_cursor(num):	# 当該ボタンだけを選択状態に
 	for i in range(num_buttons.size()):
 		num_buttons[i].pressed = (i == num)
 func update_all_status():
-	##update_undo_redo()
+	update_undo_redo()
 	update_cell_cursor(cur_num)
 	##update_NEmptyLabel()
 	update_num_buttons_disabled()
@@ -799,7 +799,7 @@ func _input(event):
 			if cur_num == 0:	# 削除ボタン選択中
 				if input_labels[ix].text != "":
 					##add_falling_char(input_labels[ix].text, ix)
-					#push_to_undo_stack([UNDO_TYPE_CELL, ix, int(input_labels[ix].text), 0, [], 0])		# ix, old, new
+					push_to_undo_stack([UNDO_TYPE_CELL, ix, int(input_labels[ix].text), 0, [], 0])		# ix, old, new
 					input_labels[ix].text = ""
 				else:
 					for i in range(N_HORZ):
@@ -813,13 +813,13 @@ func _input(event):
 					add_falling_char(input_labels[ix].text, ix)
 				var num_str = String(cur_num)
 				if input_labels[ix].text == num_str:	# 同じ数字が入っていれば消去
-					##push_to_undo_stack([UNDO_TYPE_CELL, ix, int(cur_num), 0, [], 0])		# ix, old, new
+					push_to_undo_stack([UNDO_TYPE_CELL, ix, int(cur_num), 0, [], 0])		# ix, old, new
 					input_labels[ix].text = ""
 				else:	# 上書き
 					input_num = int(cur_num)
-					##var lst = remove_memo_num(ix, cur_num)
-					#var mb = get_memo_bits(ix)
-					#push_to_undo_stack([UNDO_TYPE_CELL, ix, int(input_labels[ix].text), input_num, lst, mb])
+					var lst = remove_memo_num(ix, cur_num)
+					var mb = get_memo_bits(ix)
+					push_to_undo_stack([UNDO_TYPE_CELL, ix, int(input_labels[ix].text), input_num, lst, mb])
 					input_labels[ix].text = num_str
 				for i in range(N_HORZ): memo_labels[ix][i].text = ""	# メモ数字削除
 				pass
@@ -849,7 +849,7 @@ func num_button_pressed(num : int, button_pressed):
 			var old = get_cell_numer(cur_cell_ix)
 			if old != 0:
 				##add_falling_char(input_labels[cur_cell_ix].text, cur_cell_ix)
-				##push_to_undo_stack([UNDO_TYPE_CELL, cur_cell_ix, old, 0, [], 0])
+				push_to_undo_stack([UNDO_TYPE_CELL, cur_cell_ix, old, 0, [], 0])
 				input_labels[cur_cell_ix].text = ""
 			##else:
 			##	remove_all_memo_at(cur_cell_ix)
@@ -860,7 +860,7 @@ func num_button_pressed(num : int, button_pressed):
 					if old != 0:
 						add_falling_char(input_labels[cur_cell_ix].text, cur_cell_ix)
 					if num == old:		# 同じ数字を入れる → 削除
-						##push_to_undo_stack([UNDO_TYPE_CELL, cur_cell_ix, old, 0, [], 0])
+						push_to_undo_stack([UNDO_TYPE_CELL, cur_cell_ix, old, 0, [], 0])
 						input_labels[cur_cell_ix].text = ""
 					else:
 						input_num = num
