@@ -769,6 +769,20 @@ func flip_memo_num(ix : int, num : int):
 	else:
 		add_falling_memo(int(memo_labels[ix][num-1].text), ix)
 		memo_labels[ix][num-1].text = ""
+func flip_memo_bits(ix, bits):
+	var mask = BIT_1
+	for n in range(N_HORZ):
+		if (bits & mask) != 0:
+			flip_memo_num(ix, n+1)
+		mask <<= 1
+func set_memo_bits(ix, bits):
+	var mask = BIT_1
+	for i in range(N_HORZ):
+		if (bits & mask) != 0:
+			memo_labels[ix][i].text = String(i+1)
+		else:
+			memo_labels[ix][i].text = ""
+		mask <<= 1
 func clear_all_memo(ix):
 	for i in range(N_HORZ): memo_labels[ix][i].text = ""
 func _input(event):
@@ -925,3 +939,48 @@ func _on_BackButton_pressed():
 		get_tree().change_scene("res://TopScene.tscn")
 	else:
 		get_tree().change_scene("res://LevelScene.tscn")
+
+
+func _on_UndoButton_pressed():
+	if paused: return		# ポーズ中
+	undo_ix -= 1
+	var item = undo_stack[undo_ix]
+	if item[UNDO_ITEM_TYPE] == UNDO_TYPE_CELL:
+		var txt = String(item[UNDO_ITEM_OLD]) if item[UNDO_ITEM_OLD] != 0 else ""
+		input_labels[item[UNDO_ITEM_IX]].text = txt
+		var lst = item[UNDO_ITEM_MEMOIX]
+		for i in range(lst.size()):
+			flip_memo_num(lst[i], item[UNDO_ITEM_NEW])
+		var mb = item[UNDO_ITEM_MEMO]
+		flip_memo_bits(item[UNDO_ITEM_IX], mb)
+	elif item[UNDO_ITEM_TYPE] == UNDO_TYPE_MEMO:
+		flip_memo_num(item[UNDO_ITEM_IX], item[UNDO_ITEM_NUM])
+	elif item[UNDO_ITEM_TYPE] == UNDO_TYPE_AUTO_MEMO:
+		var lst = item[UNDO_ITEM_MEMO_LST]
+		for ix in range(N_CELLS):
+			set_memo_bits(ix, lst[ix])
+	elif item[UNDO_ITEM_TYPE] == UNDO_TYPE_DEL_MEMO:
+		var lst = item[UNDO_ITEM_MEMO_LST]
+		for ix in range(N_CELLS):
+			set_memo_bits(ix, lst[ix])
+	update_all_status()
+func _on_RedoButton_pressed():
+	if paused: return		# ポーズ中
+	var item = undo_stack[undo_ix]
+	if item[UNDO_ITEM_TYPE] == UNDO_TYPE_CELL:
+		var txt = String(item[UNDO_ITEM_NEW]) if item[UNDO_ITEM_NEW] != 0 else ""
+		input_labels[item[UNDO_ITEM_IX]].text = txt
+		var lst = item[UNDO_ITEM_MEMOIX]
+		for i in range(lst.size()):
+			flip_memo_num(lst[i], item[UNDO_ITEM_NEW])
+		if item[UNDO_ITEM_NEW] != 0: clear_all_memo(item[UNDO_ITEM_IX])
+	elif item[UNDO_ITEM_TYPE] == UNDO_TYPE_MEMO:
+		flip_memo_num(item[UNDO_ITEM_IX], item[UNDO_ITEM_NUM])
+	elif item[UNDO_ITEM_TYPE] == UNDO_TYPE_AUTO_MEMO:
+		do_auto_memo()
+	elif item[UNDO_ITEM_TYPE] == UNDO_TYPE_DEL_MEMO:
+		remove_all_memo()
+	undo_ix += 1
+	update_all_status()
+func do_auto_memo():
+	pass
