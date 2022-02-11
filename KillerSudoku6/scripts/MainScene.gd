@@ -682,6 +682,21 @@ func update_all_status():
 	update_num_buttons_disabled()
 	check_duplicated()
 	check_cages()
+	if solvedStat:
+		var six = g.qLevel if g.qNumber == 0 else g.qLevel + 3
+		var n = g.stats[six]["NSolved"]
+		var avg : int = int(g.stats[six]["TotalSec"] / n)
+		var txt = g.sec_to_MSStr(avg)
+		var bst = g.sec_to_MSStr(g.stats[six]["BestTime"])
+		$MessLabel.text = "グッジョブ！ クリア回数: %d、平均: %s、最短: %s" % [n, txt, bst]
+	elif paused:
+		$MessLabel.text = "ポーズ中です。解除にはポーズボタンを押してください。"
+	elif cur_num > 0:
+		$MessLabel.text = "現数字（%d）を入れるセルをクリックしてください。" % cur_num
+	elif cur_cell_ix >= 0:
+		$MessLabel.text = "セルに入れる数字ボタンをクリックしてください。"
+	else:
+		$MessLabel.text = "数字ボタンまたは空セルをクリックしてください。"
 func update_nEmpty():
 	nEmpty = 0
 	for ix in range(N_CELLS):
