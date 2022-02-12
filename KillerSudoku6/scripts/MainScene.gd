@@ -144,12 +144,7 @@ onready var g = get_node("/root/Global")
 func _ready():
 	if g.qNumber != 0:
 		g.qName = "%06d" % g.qNumber
-	var stxt = g.qName+String(g.qLevel)
-	if g.qNumber != 0: stxt += "Q"
-	seed(stxt.hash())
-	rng.set_seed(stxt.hash())
 	$TitleBar/Label.text = titleText()
-	$NextButton.disabled = g.qNumber > g.nSolved[g.qLevel]
 	#if true:
 	#	randomize()
 	#	rng.randomize()
@@ -176,17 +171,25 @@ func _ready():
 	#gen_cages()		# ケージ生成
 	#set_quest(QUEST1)
 	#is_proper_quest()
-	if true:
-		while true:
-			gen_ans()
-			gen_cages()
-			#gen_cages_3x2()		# 3x2 単位で分割
-			#break
-			if is_proper_quest():
-				break
+	gen_quest()
 	g.elapsedTime = 0.0
 	#
 	pass # Replace with function body.
+func gen_quest():
+	# undone: 問題集以外の場合対応
+	if g.qNumber != 0:	# 問題集の場合
+		$NextButton.disabled = g.qNumber > g.nSolved[g.qLevel]
+	var stxt = g.qName+String(g.qLevel)
+	if g.qNumber != 0: stxt += "Q"
+	seed(stxt.hash())
+	rng.set_seed(stxt.hash())
+	while true:
+		gen_ans()
+		gen_cages()
+		#gen_cages_3x2()		# 3x2 単位で分割
+		#break
+		if is_proper_quest():
+			return
 func classText() -> String:
 	if g.qLevel == LVL_BEGINNER: return "【入門】"
 	elif g.qLevel == 1: return "【初級】"
@@ -410,9 +413,9 @@ func gen_cages():
 	for i in range(ar.size()):
 		var ix = ar[i]
 		if cage_ix[ix] < 0:	# 未分割の場合
-			#if false:
-			if g.qLevel == 0 && i >= ar.size() - N_HORZ*2.2:
-			#if g.qLevel == 0 && rng.randf_range(0.0, 1.0) < 0.1:
+			if false:
+			#if g.qLevel == LVL_BEGINNER && i >= ar.size() - N_HORZ*2.2:
+			#if g.qLevel == LVL_BEGINNER && rng.randf_range(0.0, 1.0) < 0.1:
 				cage_ix[ix] = cage_list.size()
 				cage_list.push_back([0, [ix]])
 			else:
@@ -446,7 +449,7 @@ func gen_cages():
 					cage_ix[ix] = cage_list.size()
 					cage_ix[ix2] = cage_list.size()
 					cage_list.push_back([0, [ix, ix2]])
-				elif !lst2.empty():	# ４近傍に２セルのケージがある場合
+				elif !lst2.empty() && g.qLevel != LVL_BEGINNER:	# ４近傍に２セルのケージがある場合
 					# ２セルのケージに ix をマージ
 					var i2 = lst2[0] if lst2.size() == 1 else lst2[rng.randi_range(0, lst2.size() - 1)]
 					var lstx = cage_ix[i2]
@@ -739,7 +742,7 @@ func on_solved():
 			g.stats[six]["TotalSec"] += int(g.elapsedTime)
 		else:
 			g.stats[six]["TotalSec"] = int(g.elapsedTime)
-		if !g.stats[six].has("BestTime") || int(g.elapsedTime) < g.stats[six]["BestTime"]:
+		if !g.stats[six].has("BestTime") || g.stats[six]["BestTime"] < 1 || int(g.elapsedTime) < g.stats[six]["BestTime"]:
 			g.stats[six]["BestTime"] = int(g.elapsedTime)
 		g.save_stats()
 	update_all_status()
@@ -945,10 +948,34 @@ func _on_DeselectButton_pressed():
 	set_num_cursor(-1)
 	update_all_status()
 
-
+func gen_qName():
+	g.qRandom = true
+	g.qName = ""
+	for i in range(15):
+		var r = rng.randi_range(0, 10+26-1)
+		if r < 10: g.qName += String(r+1)
+		else: g.qName += "%c" % (r - 10 + 0x61)		# 0x61 is 'a'
 func _on_NextButton_pressed():
-	pass # Replace with function body.
-
+	if paused: return		# ポーズ中
+	g.auto_save(false, [])
+	saved_cell_data = []
+	##$SolvedLayer.hide()
+	if g.todaysQuest:		# 今日の問題の場合
+		g.qLevel += 1
+		if g.qLevel > 2: g.qLevel = 0
+	elif g.qNumber == 0:		# 問題自動生成の場合
+		g.qRandom = true		# 
+		gen_qName()
+	else:					# 問題集の場合
+		g.qNumber += 1
+		g.qName = "%06d" % g.qNumber
+	#seed((g.qName+String(g.qLevel)).hash())
+	$TitleBar/Label.text = titleText()
+	remove_all_memo()
+	#gen_quest_greedy()
+	gen_quest()
+	cur_cell_ix = -1
+	cur_num = -1
 
 func _on_BackButton_pressed():
 	g.auto_save(false, [])
