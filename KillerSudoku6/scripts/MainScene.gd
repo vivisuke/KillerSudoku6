@@ -976,7 +976,10 @@ func _on_NextButton_pressed():
 	gen_quest()
 	cur_cell_ix = -1
 	cur_num = -1
-	update_cell_cursor(cur_num)
+	#update_cell_cursor(cur_num)
+	#update_num_buttons_disabled()
+	set_num_cursor(-1)
+	update_all_status()
 
 func _on_BackButton_pressed():
 	g.auto_save(false, [])
