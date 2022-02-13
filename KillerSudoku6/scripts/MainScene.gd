@@ -65,6 +65,16 @@ const LVL_EASY = 1
 const LVL_NORMAL = 2
 
 const CAGE_TABLE = [
+	[	# for 2セルケージ
+		0b000000, 0b000000, 0b000011, 0b000101, 0b001111,	# for 1, 2, ... 5
+		0b011011, 0b111111, 0b110110, 0b110110, 0b101000, 	# for 6, 7, ... 10
+		0b110000, 											# for 11
+	],
+	[	# for 3セルケージ
+		0b000000, 0b000000, 0b000000, 0b000000, 0b000000,	# for 1, 2, ... 5
+		0b000111, 0b001011, 0b011111, 0b111111, 0b111111,	# for 6, 7, ... 10
+		0b111111, 0b111111, 0b111110, 0b110100, 0b111000,	# for 11, 12, ... 15
+	],
 ]
 # 要素：[sum, [ix1, ix2, ...]]
 const QUEST1 = [ # by wikipeida
@@ -237,12 +247,13 @@ func init_labels():
 			$Board.add_child(label)
 			# 候補数字用ラベル
 			var lst = []
-			for v in range(3):
+			for v in range(2):
 				for h in range(3):
 					label = MemoLabel.instance()
 					lst.push_back(label)
-					label.rect_position = Vector2(px + CELL_WIDTH4*(h+1)-3, py + CELL_WIDTH4*(v+1)-3)
-					label.text = ""		#String(v*3+h+1)
+					label.rect_position = Vector2(px + CELL_WIDTH4*(h+1)-3, py + CELL_WIDTH3*(v+1)+2)
+					#label.text = ""
+					label.text = String(v*3+h+1)
 					$Board.add_child(label)
 			memo_labels.push_back(lst)
 func init_cell_bit():		# clue_labels, input_labels から 各セルの cell_bit 更新
@@ -658,7 +669,7 @@ func update_cell_cursor(num):		# 選択数字ボタンと同じ数字セルを�
 					$Board/TileMap.set_cell(x, y, TILE_CURSOR)
 				else:
 					$Board/TileMap.set_cell(x, y, TILE_NONE)
-				for v in range(3):
+				for v in range(2):
 					for h in range(3):
 						var n = v * 3 + h + 1
 						var t = TILE_NONE
@@ -1032,5 +1043,81 @@ func _on_RedoButton_pressed():
 		remove_all_memo()
 	undo_ix += 1
 	update_all_status()
+func get_memo():
+	var lst = []
+	for ix in range(N_CELLS):
+		var bits = 0	
+		if get_cell_numer(ix) == 0:		# 数字が入っていない場合
+			var mask = BIT_1
+			for i in range(N_HORZ):
+				if memo_labels[ix][i].text != "": bits |= mask
+				mask <<= 1
+		lst.push_back(bits)
+	return lst
+func is_same_memo(lst):	# candidates_bit[] と lst[] を比較
+	for i in range(N_CELLS):
+		if lst[i] != candidates_bit[i]:
+			return false;
+	return true
+func cage_bits(item):
+	#var bits = 0
+	var sum = item[0]
+	var nc = item.size() - 1	# セル数
+	if nc == 1:
+		return num_to_bit(sum)
+	else:
+		return CAGE_TABLE[nc-2][sum-1]
+	#if nc <= 3:
+	#	return CAGE_TABLE[nc-2][sum-1]
+	#return bits
+	#return 0x1ff
 func do_auto_memo():
+	init_cell_bit()
+	init_candidates()		# 可能候補数字計算 → candidates_bit[]
+	var lst0 = get_memo()	# 現在の候補数字状態
+	if is_same_memo(lst0): return []	# 既に正しい候補数字が入っている場合
+	#var lst = []
+	for ix in range(N_CELLS):
+		#var bits = 0		# 以前の状態
+		if get_cell_numer(ix) != 0:		# 数字が入っている場合
+			for i in range(N_HORZ):
+				memo_labels[ix][i].text = ""
+		else:							# 数字が入っていない場合
+			var mask = BIT_1
+			for i in range(N_HORZ):
+				#if memo_labels[ix][i].text != "": bits |= mask
+				if (candidates_bit[ix] & mask) != 0:
+					memo_labels[ix][i].text = String(i+1)
+				else:
+					memo_labels[ix][i].text = ""
+				mask <<= 1
+		#lst.push_back(bits)
+	for i in range(quest_cages.size()):
+		var bits = cage_bits(quest_cages[i])
+		print(quest_cages[i], ": ", bits)
+		for k in range(1, quest_cages[i].size()):
+			var ix = quest_cages[i][k]
+			var mask = BIT_1
+			for b in range(N_HORZ):
+				if (bits & mask) == 0:
+					memo_labels[ix][b].text = ""
+				mask <<= 1
+		pass
+	return lst0		# 元の候補数字状態を返す
 	pass
+
+
+func _on_AutoMemoButton_pressed():
+	if paused: return		# ポーズ中
+	#if qCreating: return	# 問題生成中
+	##if g.env[g.KEY_N_COINS] < AUTO_MEMO_N_COINS: return
+	var lst = do_auto_memo()
+	if lst == []: return
+	##for i in range(AUTO_MEMO_N_COINS):
+	##	add_falling_coin()
+	##g.env[g.KEY_N_COINS] -= AUTO_MEMO_N_COINS
+	##$CoinButton/NCoinLabel.text = String(g.env[g.KEY_N_COINS])
+	##g.save_environment()
+	##push_to_undo_stack([UNDO_TYPE_AUTO_MEMO, lst])
+	##update_all_status()
+	##g.auto_save(true, get_cell_state())
