@@ -705,3 +705,4 @@ __meta__ = {
 [connection signal="pressed" from="DeselectButton" to="." method="_on_DeselectButton_pressed"]
 [connection signal="pressed" from="NextButton" to="." method="_on_NextButton_pressed"]
 [connection signal="pressed" from="AutoMemoButton" to="." method="_on_AutoMemoButton_pressed"]
+[connection signal="pressed" from="DelMemoButton" to="." method="_on_DelMemoButton_pressed"]

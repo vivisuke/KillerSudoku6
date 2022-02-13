@@ -67,7 +67,7 @@ const LVL_NORMAL = 2
 const CAGE_TABLE = [
 	[	# for 2セルケージ
 		0b000000, 0b000000, 0b000011, 0b000101, 0b001111,	# for 1, 2, ... 5
-		0b011011, 0b111111, 0b110110, 0b110110, 0b101000, 	# for 6, 7, ... 10
+		0b011011, 0b111111, 0b110110, 0b111100, 0b101000, 	# for 6, 7, ... 10
 		0b110000, 											# for 11
 	],
 	[	# for 3セルケージ
@@ -647,6 +647,16 @@ func add_falling_char(num_str, ix : int):
 	pass
 func add_falling_memo(num : int, ix : int):
 	pass
+func get_cell_state() -> Array:
+	var s = []		#
+	for ix in range(N_CELLS):
+		if clue_labels[ix].text != "":
+			s.push_back(int(clue_labels[ix].text))
+		elif input_labels[ix].text != "":
+			s.push_back(int(input_labels[ix].text))
+		else:
+			s.push_back(get_memo_bits(ix) + BIT_MEMO)
+	return s
 func get_cell_numer(ix) -> int:		# ix 位置に入っている数字の値を返す、0 for 空欄
 	if clue_labels[ix].text != "":
 		return int(clue_labels[ix].text)
@@ -1123,3 +1133,10 @@ func _on_AutoMemoButton_pressed():
 	##push_to_undo_stack([UNDO_TYPE_AUTO_MEMO, lst])
 	##update_all_status()
 	##g.auto_save(true, get_cell_state())
+
+
+func _on_DelMemoButton_pressed():
+	var lst = get_memo()
+	push_to_undo_stack([UNDO_TYPE_DEL_MEMO, lst])
+	remove_all_memo()
+	g.auto_save(true, get_cell_state())
