@@ -252,8 +252,8 @@ func init_labels():
 					label = MemoLabel.instance()
 					lst.push_back(label)
 					label.rect_position = Vector2(px + CELL_WIDTH4*(h+1)-3, py + CELL_WIDTH3*(v+1)+2)
-					#label.text = ""
-					label.text = String(v*3+h+1)
+					label.text = ""
+					#label.text = String(v*3+h+1)
 					$Board.add_child(label)
 			memo_labels.push_back(lst)
 func init_cell_bit():		# clue_labels, input_labels から 各セルの cell_bit 更新
@@ -479,6 +479,7 @@ func gen_cages():
 		#print(cage_list[ix])
 		cage_labels[lst.min()].text = String(sum)
 		#for k in range(lst.size()): cage_ix[lst[k]] = ix
+	quest_cages = cage_list
 	$Board/CageGrid.cage_ix = cage_ix
 	$Board/CageGrid.update()
 # cix: cage_list's index, lix: ix_list's index, ub: used bits in the cage
@@ -1061,8 +1062,8 @@ func is_same_memo(lst):	# candidates_bit[] と lst[] を比較
 	return true
 func cage_bits(item):
 	#var bits = 0
-	var sum = item[0]
-	var nc = item.size() - 1	# セル数
+	var sum = item[CAGE_SUM]
+	var nc = item[CAGE_IX_LIST].size()		# セル数
 	if nc == 1:
 		return num_to_bit(sum)
 	else:
@@ -1095,8 +1096,9 @@ func do_auto_memo():
 	for i in range(quest_cages.size()):
 		var bits = cage_bits(quest_cages[i])
 		print(quest_cages[i], ": ", bits)
-		for k in range(1, quest_cages[i].size()):
-			var ix = quest_cages[i][k]
+		var ixlst = quest_cages[i][CAGE_IX_LIST]
+		for k in range(ixlst.size()):
+			var ix = ixlst[k]
 			var mask = BIT_1
 			for b in range(N_HORZ):
 				if (bits & mask) == 0:
