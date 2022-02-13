@@ -1,4 +1,4 @@
-[gd_scene load_steps=54 format=2]
+[gd_scene load_steps=62 format=2]
 
 [ext_resource path="res://images/leftward_white.png" type="Texture" id=1]
 [ext_resource path="res://images/leftward_black.png" type="Texture" id=2]
@@ -35,6 +35,13 @@
 [ext_resource path="res://images/skip_next_black.png" type="Texture" id=33]
 [ext_resource path="res://images/skip_next_white.png" type="Texture" id=34]
 [ext_resource path="res://images/skip_next_gray.png" type="Texture" id=35]
+[ext_resource path="res://images/delMemo_white.png" type="Texture" id=36]
+[ext_resource path="res://images/auto_candidates_gray.png" type="Texture" id=37]
+[ext_resource path="res://images/auto_candidates_gold.png" type="Texture" id=38]
+[ext_resource path="res://images/edit_black.png" type="Texture" id=39]
+[ext_resource path="res://images/auto_candidates_white.png" type="Texture" id=40]
+[ext_resource path="res://images/delMemo.png" type="Texture" id=41]
+[ext_resource path="res://images/edit_cand_black.png" type="Texture" id=42]
 
 [sub_resource type="DynamicFont" id=1]
 size = 20
@@ -145,6 +152,10 @@ size = 12
 font_data = ExtResource( 3 )
 
 [sub_resource type="DynamicFont" id=18]
+size = 12
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=20]
 size = 12
 font_data = ExtResource( 3 )
 
@@ -430,10 +441,10 @@ __meta__ = {
 }
 
 [node name="DeleteButton" type="TextureButton" parent="."]
-margin_left = 378.0
-margin_top = 689.0
-margin_right = 426.0
-margin_bottom = 737.0
+margin_left = 306.0
+margin_top = 765.0
+margin_right = 354.0
+margin_bottom = 813.0
 toggle_mode = true
 texture_normal = ExtResource( 14 )
 texture_pressed = ExtResource( 15 )
@@ -603,6 +614,79 @@ margin_bottom = 67.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 18 )
 text = "次問題"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MemoButton" type="TextureButton" parent="."]
+margin_left = 373.0
+margin_top = 605.0
+margin_right = 421.0
+margin_bottom = 653.0
+toggle_mode = true
+texture_normal = ExtResource( 39 )
+texture_pressed = ExtResource( 42 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="MemoButton"]
+margin_top = 48.0
+margin_right = 48.0
+margin_bottom = 67.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 20 )
+text = "メモ"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AutoMemoButton" type="TextureButton" parent="."]
+margin_left = 437.0
+margin_top = 685.0
+margin_right = 485.0
+margin_bottom = 733.0
+texture_normal = ExtResource( 38 )
+texture_pressed = ExtResource( 40 )
+texture_disabled = ExtResource( 37 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="AutoMemoButton"]
+margin_left = -7.0
+margin_top = 48.0
+margin_right = 57.0
+margin_bottom = 67.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 20 )
+text = "自動メモ"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DelMemoButton" type="TextureButton" parent="."]
+margin_left = 373.0
+margin_top = 685.0
+margin_right = 421.0
+margin_bottom = 733.0
+texture_normal = ExtResource( 41 )
+texture_pressed = ExtResource( 36 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="DelMemoButton"]
+margin_left = -11.0
+margin_top = 48.0
+margin_right = 53.0
+margin_bottom = 67.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 20 )
+text = "メモ削除"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
