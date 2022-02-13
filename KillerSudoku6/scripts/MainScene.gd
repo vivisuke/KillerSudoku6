@@ -658,6 +658,16 @@ func add_falling_char(num_str, ix : int):
 	add_child(fc)
 	pass
 func add_falling_memo(num : int, ix : int):
+	var fc = FallingMemo.instance()
+	var x = (ix % N_HORZ) * 3 + (num-1) % 3
+	var y = (ix / N_HORZ) * 3 + (num-1) / 3
+	fc.position = $Board.rect_position + Vector2(x*CELL_WIDTH/3, y*CELL_WIDTH/3)
+	fc.get_node("Label").text = String(num)
+	var th = rng.randf_range(0, 3.1415926535*2)
+	fc.linear_velocity = Vector2(cos(th), sin(th))*100
+	fc.angular_velocity = rng.randf_range(0, 1)
+	#fc.set_scale(1.0/3.0)
+	add_child(fc)
 	pass
 func get_cell_state() -> Array:
 	var s = []		#
