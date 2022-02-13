@@ -148,6 +148,9 @@ var CageLabel = load("res://CageLabel.tscn")
 var ClueLabel = load("res://ClueLabel.tscn")
 var InputLabel = load("res://InputLabel.tscn")
 var MemoLabel = load("res://MemoLabel.tscn")
+var FallingChar = load("res://FallingChar.tscn")
+var FallingMemo = load("res://FallingMemo.tscn")
+var FallingCoin = load("res://FallingCoin.tscn")
 
 onready var g = get_node("/root/Global")
 
@@ -644,6 +647,15 @@ func do_emphasize(ix : int, type, fullhouse):
 		$Board/TileMap.set_cell(x, y, TILE_CURSOR)
 	pass
 func add_falling_char(num_str, ix : int):
+	var fc = FallingChar.instance()
+	var x = ix % N_HORZ
+	var y = ix / N_HORZ
+	fc.position = $Board.rect_position + Vector2(x*CELL_WIDTH, y*CELL_WIDTH)
+	fc.get_node("Label").text = num_str
+	var th = rng.randf_range(0, 3.1415926535*2)
+	fc.linear_velocity = Vector2(cos(th), sin(th))*100
+	fc.angular_velocity = rng.randf_range(0, 1)
+	add_child(fc)
 	pass
 func add_falling_memo(num : int, ix : int):
 	pass
@@ -856,7 +868,7 @@ func _input(event):
 				return
 			if cur_num == 0:	# 削除ボタン選択中
 				if input_labels[ix].text != "":
-					##add_falling_char(input_labels[ix].text, ix)
+					add_falling_char(input_labels[ix].text, ix)
 					push_to_undo_stack([UNDO_TYPE_CELL, ix, int(input_labels[ix].text), 0, [], 0])		# ix, old, new
 					input_labels[ix].text = ""
 				else:
@@ -906,7 +918,7 @@ func num_button_pressed(num : int, button_pressed):
 		if num == 0:			# 削除ボタン押下の場合
 			var old = get_cell_numer(cur_cell_ix)
 			if old != 0:
-				##add_falling_char(input_labels[cur_cell_ix].text, cur_cell_ix)
+				add_falling_char(input_labels[cur_cell_ix].text, cur_cell_ix)
 				push_to_undo_stack([UNDO_TYPE_CELL, cur_cell_ix, old, 0, [], 0])
 				input_labels[cur_cell_ix].text = ""
 			##else:
