@@ -60,6 +60,8 @@ const UNDO_ITEM_NEW = 3			# for セル数字
 const UNDO_ITEM_MEMOIX = 4		# メモ数字反転位置リスト
 const UNDO_ITEM_MEMO = 5		# 数字を入れた位置のメモ数字（ビット値）
 const UNDO_ITEM_MEMO_LST = 1
+const NUM_FONT_SIZE = 40
+const MEMO_FONT_SIZE = 20
 const LVL_BEGINNER = 0
 const LVL_EASY = 1
 const LVL_NORMAL = 2
@@ -1162,3 +1164,16 @@ func _on_DelMemoButton_pressed():
 	push_to_undo_stack([UNDO_TYPE_DEL_MEMO, lst])
 	remove_all_memo()
 	g.auto_save(true, get_cell_state())
+
+
+func _on_MemoButton_toggled(button_pressed):
+	memo_mode = button_pressed
+	print(memo_mode)
+	var sz = MEMO_FONT_SIZE if memo_mode else NUM_FONT_SIZE
+	var font = DynamicFont.new()
+	font.font_data = load("res://fonts/arialbd.ttf")
+	font.size = sz
+	#print(font)
+	for i in range(N_HORZ):
+		num_buttons[i+1].add_font_override("font", font)
+	pass # Replace with function body.
