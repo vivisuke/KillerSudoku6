@@ -1,5 +1,7 @@
 extends Node2D
 
+const N_BUTTONS = 6
+
 var buttons = []
 onready var g = get_node("/root/Global")
 
@@ -11,6 +13,25 @@ func _ready():
 		g.save_environment()
 	$CoinButton/NCoinLabel.text = String(g.env[g.KEY_N_COINS])
 	g.load_stats()
+	#
+	for i in range(N_BUTTONS):
+		buttons.push_back(get_node("Button%d" % i))
+	for i in range(N_BUTTONS):
+		var n = g.stats[i]["NSolved"] if g.stats[i].has("NSolved") else 0
+		buttons[i].get_node("NSolvedLabel").text = "クリア回数: %d" % n
+		var txt = "平均タイム: "
+		if n == 0:
+			txt += "N/A"
+		else:
+			var avg : int = int(g.stats[i]["TotalSec"] / n)
+			txt += g.sec_to_MSStr(avg)
+		buttons[i].get_node("AveTimeLabel").text = txt
+		txt = "最短タイム: "
+		if g.stats[i].has("BestTime"):
+			txt += g.sec_to_MSStr(g.stats[i]["BestTime"])
+		else:
+			txt += "N/A"
+		buttons[i].get_node("BestTimeLabel").text = txt
 	pass # Replace with function body.
 
 
