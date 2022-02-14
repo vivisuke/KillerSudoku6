@@ -225,6 +225,8 @@ func bit_to_num(b):
 func bit_to_numstr(b):
 	if b == 0: return ""
 	return String(bit_to_num(b))
+func memo_label_pos(px, py, h, v):
+	return Vector2(px + CELL_WIDTH4*(h+1)-3, py + CELL_WIDTH3*(v+1)+2)
 func init_labels():
 	# 手がかり数字、入力数字用 Label 生成
 	for y in range(N_VERT):
@@ -256,7 +258,7 @@ func init_labels():
 				for h in range(3):
 					label = MemoLabel.instance()
 					lst.push_back(label)
-					label.rect_position = Vector2(px + CELL_WIDTH4*(h+1)-3, py + CELL_WIDTH3*(v+1)+2)
+					label.rect_position = memo_label_pos(px, py, h, v)
 					label.text = ""
 					#label.text = String(v*3+h+1)
 					$Board.add_child(label)
@@ -661,9 +663,14 @@ func add_falling_char(num_str, ix : int):
 	pass
 func add_falling_memo(num : int, ix : int):
 	var fc = FallingMemo.instance()
-	var x = (ix % N_HORZ) * 3 + (num-1) % 3
-	var y = (ix / N_HORZ) * 3 + (num-1) / 3
-	fc.position = $Board.rect_position + Vector2(x*CELL_WIDTH/3, y*CELL_WIDTH/3)
+	#var x = (ix % N_HORZ) * 3 + (num-1) % 3
+	#var y = (ix / N_HORZ) * 3 + (num-1) / 3
+	#fc.position = $Board.rect_position + Vector2(x*CELL_WIDTH/3, y*CELL_WIDTH/3)
+	var px = (ix % N_HORZ) * CELL_WIDTH
+	var py = (ix / N_HORZ) * CELL_WIDTH
+	var h = (num-1) % 3
+	var v = (num-1) / 3
+	fc.position = $Board.rect_position + memo_label_pos(px, py, h, v)
 	fc.get_node("Label").text = String(num)
 	var th = rng.randf_range(0, 3.1415926535*2)
 	fc.linear_velocity = Vector2(cos(th), sin(th))*100
@@ -904,7 +911,11 @@ func _input(event):
 					push_to_undo_stack([UNDO_TYPE_CELL, ix, int(input_labels[ix].text), input_num, lst, mb])
 					input_labels[ix].text = num_str
 				for i in range(N_HORZ): memo_labels[ix][i].text = ""	# メモ数字削除
-				pass
+			else:	# 候補数字モード
+				if get_cell_numer(ix) != 0:
+					return		# 空欄でない場合
+				push_to_undo_stack([UNDO_TYPE_MEMO, ix, cur_num])
+				flip_memo_num(ix, cur_num)
 		update_all_status()
 		sound_effect()
 		if !solvedStat && is_solved():
