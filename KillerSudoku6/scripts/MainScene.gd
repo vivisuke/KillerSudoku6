@@ -77,6 +77,12 @@ const CAGE_TABLE = [
 		0b000111, 0b001011, 0b011111, 0b111111, 0b111111,	# for 6, 7, ... 10
 		0b111111, 0b111111, 0b111110, 0b110100, 0b111000,	# for 11, 12, ... 15
 	],
+	[	# for 4セルケージ
+		0b000000, 0b000000, 0b000000, 0b000000, 0b000000,	# for 1, 2, ... 5
+		0b000000, 0b000000, 0b000000, 0b000000, 0b001111,	# for 6, 7, ... 10
+		0b010111, 0b111111, 0b111111, 0b111111, 0b111111,	# for 11, 12, ... 15
+		0b111111, 0b111111, 0b111111, 0b111010, 0b111100,	# for 16, 17, 18
+	],
 ]
 
 var qix                 	# 問題番号 [0, N]
@@ -191,7 +197,11 @@ func gen_quest():
 	while true:
 		gen_ans()
 		gen_cages()
-		if g.qLevel == LVL_NORMAL:
+		if g.qLevel == LVL_BEGINNER:
+			if count_1cell_cage() < 4:
+				continue			# 再生成
+			#split_2cell_cage()		# 1セルケージ数が４未満なら２セルケージを分割
+		elif g.qLevel == LVL_NORMAL:
 			merge_2cell_cage()
 		#print_cages()
 		#gen_cages_3x2()		# 3x2 単位で分割
@@ -199,6 +209,29 @@ func gen_quest():
 		if is_proper_quest():
 			break
 	update_cages_sum_labels()
+func count_1cell_cage():
+	var n = 0
+	for i in range(cage_list.size()):
+		if cage_list[i][CAGE_IX_LIST].size() == 1: n += 1
+	return n
+func find_2cell_cage():		# 2セルケージを探す
+	while true:
+		var ix = rng.randi_range(0, cage_list.size() - 1)
+		if cage_list[ix][CAGE_IX_LIST].size() == 2:
+			return ix
+func split_2cell_cage():		# 1セルケージ数が４未満なら２セルケージを分割
+	if count_1cell_cage() >= 4: return
+	var cix = find_2cell_cage()		# 2セルケージを探す
+	var cage = cage_list[cix]
+	var ix2 = cage[CAGE_IX_LIST][1]		# ２番めの要素
+	cage_ix[ix2] = cage_list.size()
+	var t = [bit_to_num(cell_bit[ix2]), [ix2]]
+	cage_list.push_back(t)
+	var ix1 = cage[CAGE_IX_LIST][0]		# 1番めの要素
+	cage = [bit_to_num(cell_bit[ix1]), [ix1]]
+	#update_cages_sum_labels()
+	cage_labels[ix1].text = String(get_cell_numer(ix1))
+	cage_labels[ix2].text = String(get_cell_numer(ix2))
 func classText() -> String:
 	if g.qLevel == LVL_BEGINNER: return "【入門】"
 	elif g.qLevel == 1: return "【初級】"
