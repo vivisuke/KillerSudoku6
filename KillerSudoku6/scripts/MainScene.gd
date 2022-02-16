@@ -851,13 +851,26 @@ func _process(delta):
 		sec -= m * 60
 		$TimeLabel.text = "%02d:%02d:%02d" % [h, m, sec]
 	pass
+func is_all_solved_todaysQuest():
+	return g.tqSolvedSec[0] >= 0 && g.tqSolvedSec[1] >= 0 && g.tqSolvedSec[2] >= 0
 func on_solved():
 	solvedStat = true
 	if sound:
 		$AudioSolved.play()		# （どんっ）効果音再生
 	var six = g.qLevel		# g.stat インデックス
 	if g.todaysQuest:		# 今日の問題の場合
-		pass
+		if g.tqSolvedSec[six] < 0 || int(g.elapsedTime) < g.tqSolvedSec[six]:
+			g.tqSolvedSec[six] = int(g.elapsedTime)	# 最短クリア時間更新
+		if is_all_solved_todaysQuest() && g.tqConsSolvedDays != g.tqConsYesterdayDays + 1:
+			# 全問クリアの場合
+			g.tqConsSolvedDays = g.tqConsYesterdayDays + 1
+			if g.tqConsSolvedDays > g.tqMaxConsSolvedDays:
+				g.tqMaxConsSolvedDays = g.tqConsSolvedDays		# 最大連続クリア日数
+			g.env[g.KEY_N_COINS] += g.TODAYS_QUEST_N_COINS
+			$CoinButton/NCoinLabel.text = String(g.env[g.KEY_N_COINS])
+			g.save_environment()
+		g.tqSolvedYMD = g.today_string()
+		g.save_todaysQuest()
 	else:	# 今日の問題でない場合
 		if g.qNumber != 0:		# 問題集の場合
 			if g.nSolved[g.qLevel] == g.qNumber - 1:	
