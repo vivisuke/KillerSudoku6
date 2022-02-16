@@ -921,8 +921,8 @@ func remove_memo_num(ix : int, num : int):		# ix に num を入れたときに�
 			memo_labels[ix2][num-1].text = ""
 			lst.push_back(ix2)
 	var x0 = x - x % 3
-	var y0 = y - y % 3
-	for v in range(3):
+	var y0 = y - y % 2
+	for v in range(2):
 		for h in range(3):
 			var ix2 = xyToIX(x0 + h, y0 + v)
 			if memo_labels[ix2][num-1].text != "":
