@@ -1,4 +1,4 @@
-[gd_scene load_steps=62 format=2]
+[gd_scene load_steps=65 format=2]
 
 [ext_resource path="res://images/leftward_white.png" type="Texture" id=1]
 [ext_resource path="res://images/leftward_black.png" type="Texture" id=2]
@@ -42,6 +42,7 @@
 [ext_resource path="res://images/auto_candidates_white.png" type="Texture" id=40]
 [ext_resource path="res://images/delMemo.png" type="Texture" id=41]
 [ext_resource path="res://images/edit_cand_black.png" type="Texture" id=42]
+[ext_resource path="res://images/gold_medal.png" type="Texture" id=43]
 
 [sub_resource type="DynamicFont" id=1]
 size = 20
@@ -158,6 +159,13 @@ font_data = ExtResource( 3 )
 [sub_resource type="DynamicFont" id=20]
 size = 12
 font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=21]
+size = 12
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=22]
+font_data = ExtResource( 32 )
 
 [node name="MainScene" type="Node2D"]
 script = ExtResource( 12 )
@@ -688,6 +696,41 @@ custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 20 )
 text = "メモ削除"
 align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CoinButton" type="TextureButton" parent="."]
+margin_left = 14.0
+margin_top = 765.0
+margin_right = 62.0
+margin_bottom = 813.0
+texture_normal = ExtResource( 43 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="CoinButton"]
+margin_left = -8.0
+margin_top = 48.0
+margin_right = 56.0
+margin_bottom = 67.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 21 )
+text = "コイン"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NCoinLabel" type="Label" parent="CoinButton"]
+margin_right = 48.0
+margin_bottom = 48.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 22 )
+text = "10"
+align = 1
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
