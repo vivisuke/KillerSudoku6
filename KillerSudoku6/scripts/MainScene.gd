@@ -816,13 +816,16 @@ func update_all_status():
 	check_duplicated()
 	check_cages()
 	if solvedStat:
-		var six = g.qLevel if g.qNumber == 0 else g.qLevel + 3
-		var n = g.stats[six]["NSolved"]
-		print("TotalSec = ", g.stats[six]["TotalSec"])
-		var avg : int = int(g.stats[six]["TotalSec"] / n)
-		var txt = g.sec_to_MSStr(avg)
-		var bst = g.sec_to_MSStr(g.stats[six]["BestTime"])
-		$MessLabel.text = "グッジョブ！ クリア回数: %d、平均: %s、最短: %s" % [n, txt, bst]
+		if !g.todaysQuest:
+			var six = g.qLevel if g.qNumber == 0 else g.qLevel + 3
+			var n = g.stats[six]["NSolved"]
+			print("TotalSec = ", g.stats[six]["TotalSec"])
+			var avg : int = int(g.stats[six]["TotalSec"] / n)
+			var txt = g.sec_to_MSStr(avg)
+			var bst = g.sec_to_MSStr(g.stats[six]["BestTime"])
+			$MessLabel.text = "グッジョブ！ クリア回数: %d、平均: %s、最短: %s" % [n, txt, bst]
+		else:
+			$MessLabel.text = "グッジョブ！"
 	elif paused:
 		$MessLabel.text = "ポーズ中です。解除にはポーズボタンを押してください。"
 	elif cur_num > 0:
