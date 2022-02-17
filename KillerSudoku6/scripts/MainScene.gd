@@ -203,10 +203,11 @@ func gen_quest():
 		gen_ans()
 		gen_cages()
 		if g.qLevel == LVL_BEGINNER:
-			if count_1cell_cage() < 4:
+			if count_1cell_cage() < 8:
 				continue			# 再生成
-			#split_2cell_cage()		# 1セルケージ数が４未満なら２セルケージを分割
-		elif g.qLevel == LVL_NORMAL:
+		#	#split_2cell_cage()		# 1セルケージ数が４未満なら２セルケージを分割
+		#el
+		if g.qLevel == LVL_NORMAL:
 			merge_2cell_cage()
 		#print_cages()
 		#gen_cages_3x2()		# 3x2 単位で分割
@@ -461,7 +462,6 @@ func sel_from_lst(ix, lst):		# lst からひとつを選ぶ
 				mni = i
 		return lst[mni]
 func gen_cages():
-	for i in range(cage_ix.size()): cage_ix[i] = -1
 	for i in range(N_CELLS): cage_labels[i].text = ""
 	cage_list = []
 	# 4隅を風車風に２セルケージに分ける
@@ -481,9 +481,19 @@ func gen_cages():
 		cage_list.push_back([0, [ix0, ix0+1]])
 		ix0 = N_CELLS - 1
 		cage_list.push_back([0, [ix0, ix0-N_HORZ]])
+	for i in range(cage_ix.size()): cage_ix[i] = -1
 	for ix in range(cage_list.size()):
 		var lst = cage_list[ix][1]
 		for k in range(lst.size()): cage_ix[lst[k]] = ix
+	# undone: 入門問題の場合は１セルケージを8つ生成
+	if g.qLevel == LVL_BEGINNER:
+		var cnt = 8
+		while cnt != 0:
+			var ix = rng.randi_range(0, N_CELLS-1)
+			if cage_ix[ix] >= 0: continue
+			cage_ix[ix] = cage_list.size()
+			cage_list.push_back([0, [ix]])
+			cnt -= 4
 	#
 	var ar = []
 	for ix in range(N_CELLS): ar.push_back(ix)
