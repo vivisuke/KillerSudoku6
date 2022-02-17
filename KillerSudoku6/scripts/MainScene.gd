@@ -1279,7 +1279,7 @@ func do_auto_memo():
 func _on_AutoMemoButton_pressed():
 	if paused: return		# ポーズ中
 	#if qCreating: return	# 問題生成中
-	##if g.env[g.KEY_N_COINS] < AUTO_MEMO_N_COINS: return
+	if g.env[g.KEY_N_COINS] < AUTO_MEMO_N_COINS: return
 	var lst = do_auto_memo()
 	if lst == []: return
 	for i in range(AUTO_MEMO_N_COINS):
