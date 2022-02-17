@@ -24,6 +24,8 @@ const CAGE_N_NUM_MAX = 4	# ケージ最大セル数
 const N_VERT = 6
 const N_HORZ = 6
 const N_CELLS = N_HORZ * N_VERT
+const N_BOX_VERT = 2
+const N_BOX_HORZ = 3
 const CELL_WIDTH = 81
 const CELL_WIDTH3 = CELL_WIDTH/3
 const CELL_WIDTH4 = CELL_WIDTH/4
@@ -281,8 +283,8 @@ func init_labels():
 			$Board.add_child(label)
 			# 候補数字用ラベル
 			var lst = []
-			for v in range(2):
-				for h in range(3):
+			for v in range(N_BOX_VERT):
+				for h in range(N_BOX_HORZ):
 					label = MemoLabel.instance()
 					lst.push_back(label)
 					label.rect_position = memo_label_pos(px, py, h, v)
@@ -309,8 +311,8 @@ func init_candidates():		# cell_bit から各セルの候補数字計算
 					candidates_bit[xyToIX(x, t)] &= ~b
 				var x0 = x - x % 3		# 3x3ブロック左上位置
 				var y0 = y - y % 3
-				for v in range(2):
-					for h in range(3):
+				for v in range(N_BOX_VERT):
+					for h in range(N_BOX_HORZ):
 						candidates_bit[xyToIX(x0 + h, y0 + v)] &= ~b
 	pass
 func gen_ans_sub(ix : int, line_used):
@@ -657,8 +659,8 @@ func is_duplicated(ix : int):
 			return true
 	var x0 = x - x % 3		# 3x2ブロック左上位置
 	var y0 = y - y % 2
-	for v in range(2):
-		for h in range(3):
+	for v in range(N_BOX_VERT):
+		for h in range(N_BOX_HORZ):
 			var ix3 = xyToIX(x0+h, y0+v)
 			if ix3 != ix && get_cell_numer(ix3) == n:
 				return true
@@ -787,19 +789,20 @@ func update_cell_cursor(num):		# 選択数字ボタンと同じ数字セルを�
 					$Board/TileMap.set_cell(x, y, TILE_CURSOR)
 				else:
 					$Board/TileMap.set_cell(x, y, TILE_NONE)
-				for v in range(2):
-					for h in range(3):
-						var n = v * 3 + h + 1
-						var t = TILE_NONE
-						if memo_labels[ix][n-1].text == num_str:
-							t = TILE_CURSOR
-						##$Board/MemoTileMap.set_cell(x*3+h, y*3+v, t)
+				# undone: 背景 ColorRect で描画
+				#for v in range(N_BOX_VERT):
+				#	for h in range(N_BOX_HORZ):
+				#		var n = v * 3 + h + 1
+				#		var t = TILE_NONE
+				#		if memo_labels[ix][n-1].text == num_str:
+				#			t = TILE_CURSOR
+				#		##$Board/MemoTileMap.set_cell(x*3+h, y*3+v, t)
 	else:
 		for y in range(N_VERT):
 			for x in range(N_HORZ):
 				$Board/TileMap.set_cell(x, y, TILE_NONE)
-				##for v in range(2):
-				##	for h in range(3):
+				##for v in range(N_BOX_VERT):
+				##	for h in range(N_BOX_HORZ):
 				##		$Board/MemoTileMap.set_cell(x*3+h, y*3+v, TILE_NONE)
 		if cur_cell_ix >= 0:
 			do_emphasize(cur_cell_ix, CELL, false)
@@ -922,8 +925,8 @@ func remove_memo_num(ix : int, num : int):		# ix に num を入れたときに�
 			lst.push_back(ix2)
 	var x0 = x - x % 3
 	var y0 = y - y % 2
-	for v in range(2):
-		for h in range(3):
+	for v in range(N_BOX_VERT):
+		for h in range(N_BOX_HORZ):
 			var ix2 = xyToIX(x0 + h, y0 + v)
 			if memo_labels[ix2][num-1].text != "":
 				add_falling_memo(num, ix2)
