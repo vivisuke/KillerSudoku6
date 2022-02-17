@@ -1309,3 +1309,7 @@ func _on_MemoButton_toggled(button_pressed):
 	for i in range(N_HORZ):
 		num_buttons[i+1].add_font_override("font", font)
 	pass # Replace with function body.
+
+
+func _on_PauseButton_pressed():
+	pass # Replace with function body.
