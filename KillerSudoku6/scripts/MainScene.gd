@@ -311,8 +311,8 @@ func init_candidates():		# cell_bit から各セルの候補数字計算
 				for t in range(N_HORZ):
 					candidates_bit[xyToIX(t, y)] &= ~b
 					candidates_bit[xyToIX(x, t)] &= ~b
-				var x0 = x - x % 3		# 3x3ブロック左上位置
-				var y0 = y - y % 3
+				var x0 = x - x % 3		# 3x2ブロック左上位置
+				var y0 = y - y % 2
 				for v in range(N_BOX_VERT):
 					for h in range(N_BOX_HORZ):
 						candidates_bit[xyToIX(x0 + h, y0 + v)] &= ~b
