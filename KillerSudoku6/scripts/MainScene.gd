@@ -1328,6 +1328,8 @@ func _on_PauseButton_pressed():
 				lst.push_back(memo_labels[ix][i].text)
 				memo_labels[ix][i].text = ""
 			memo_text[ix] = lst
+			if cage_labels[ix].text != "":
+				cage_labels[ix].text = "?"
 		for i in range(N_HORZ+1):
 			num_buttons[i].disabled = true
 	else:
@@ -1338,5 +1340,6 @@ func _on_PauseButton_pressed():
 				input_labels[ix].text = bit_to_numstr(cell_bit[ix])
 			for i in range(N_HORZ):
 				memo_labels[ix][i].text = memo_text[ix][i]
+		update_cages_sum_labels()
 	update_all_status()
 	pass # Replace with function body.
