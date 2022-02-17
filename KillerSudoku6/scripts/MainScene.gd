@@ -67,6 +67,7 @@ const MEMO_FONT_SIZE = 20
 const LVL_BEGINNER = 0
 const LVL_EASY = 1
 const LVL_NORMAL = 2
+const AUTO_MEMO_N_COINS = 3				# 自動メモ消費コイン数
 
 const CAGE_TABLE = [
 	[	# for 2セルケージ
@@ -756,6 +757,13 @@ func add_falling_memo(num : int, ix : int):
 	#fc.set_scale(1.0/3.0)
 	add_child(fc)
 	pass
+func add_falling_coin():
+	var fc = FallingCoin.instance()
+	fc.position = $CoinButton.rect_position + $CoinButton.rect_size / 2
+	var th = rng.randf_range(0, 3.1415926535*2)
+	fc.linear_velocity = Vector2(cos(th), sin(th))*100
+	fc.angular_velocity = rng.randf_range(0, 1)
+	add_child(fc)
 func get_cell_state() -> Array:
 	var s = []		#
 	for ix in range(N_CELLS):
@@ -1255,14 +1263,14 @@ func _on_AutoMemoButton_pressed():
 	##if g.env[g.KEY_N_COINS] < AUTO_MEMO_N_COINS: return
 	var lst = do_auto_memo()
 	if lst == []: return
-	##for i in range(AUTO_MEMO_N_COINS):
-	##	add_falling_coin()
-	##g.env[g.KEY_N_COINS] -= AUTO_MEMO_N_COINS
-	##$CoinButton/NCoinLabel.text = String(g.env[g.KEY_N_COINS])
-	##g.save_environment()
-	##push_to_undo_stack([UNDO_TYPE_AUTO_MEMO, lst])
-	##update_all_status()
-	##g.auto_save(true, get_cell_state())
+	for i in range(AUTO_MEMO_N_COINS):
+		add_falling_coin()
+	g.env[g.KEY_N_COINS] -= AUTO_MEMO_N_COINS
+	$CoinButton/NCoinLabel.text = String(g.env[g.KEY_N_COINS])
+	g.save_environment()
+	push_to_undo_stack([UNDO_TYPE_AUTO_MEMO, lst])
+	update_all_status()
+	g.auto_save(true, get_cell_state())
 
 
 func _on_DelMemoButton_pressed():
