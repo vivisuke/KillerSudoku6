@@ -180,6 +180,7 @@ func _ready():
 	for i in range(N_HORZ):
 		num_buttons.push_back(get_node("Button%d" % (i+1)))
 	#
+	$CoinButton/NCoinLabel.text = String(g.env[g.KEY_N_COINS])
 	init_labels()
 	#gen_ans()		# 答え生成
 	#show_clues()	# 手がかり数字表示
