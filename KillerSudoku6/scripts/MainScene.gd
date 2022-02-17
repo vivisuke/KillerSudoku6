@@ -1107,6 +1107,24 @@ func _on_DeselectButton_pressed():
 	#cur_num = -1
 	set_num_cursor(-1)
 	update_all_status()
+func _on_CheckButton_pressed():
+	if paused: return		# ポーズ中
+	if qCreating: return	# 問題生成中
+	if g.env[g.KEY_N_COINS] < 1: return
+	add_falling_coin()
+	g.env[g.KEY_N_COINS] -= 1
+	$CoinButton/NCoinLabel.text = String(g.env[g.KEY_N_COINS])
+	g.save_environment()
+	var err = false
+	for ix in range(N_CELLS):
+		if input_labels[ix].text != "" && input_labels[ix].text != bit_to_numstr(ans_bit[ix]):
+			err = true
+			input_labels[ix].add_color_override("font_color", COLOR_INCORRECT)
+	if err:
+		$MessLabel.text = "間違って入っている数字（赤色）があります。"
+	else:
+		$MessLabel.text = "間違って入っている数字はありません。"
+	pass # Replace with function body.
 
 func gen_qName():
 	g.qRandom = true
