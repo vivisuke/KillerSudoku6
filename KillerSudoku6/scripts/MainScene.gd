@@ -187,6 +187,7 @@ func _ready():
 	#is_proper_quest()
 	gen_quest()
 	g.elapsedTime = 0.0
+	update_all_status()
 	#
 	pass # Replace with function body.
 func gen_quest():
