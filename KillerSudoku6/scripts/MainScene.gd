@@ -309,7 +309,7 @@ func init_candidates():		# cell_bit から各セルの候補数字計算
 					candidates_bit[xyToIX(x, t)] &= ~b
 				var x0 = x - x % 3		# 3x3ブロック左上位置
 				var y0 = y - y % 3
-				for v in range(3):
+				for v in range(2):
 					for h in range(3):
 						candidates_bit[xyToIX(x0 + h, y0 + v)] &= ~b
 	pass
@@ -798,7 +798,7 @@ func update_cell_cursor(num):		# 選択数字ボタンと同じ数字セルを�
 		for y in range(N_VERT):
 			for x in range(N_HORZ):
 				$Board/TileMap.set_cell(x, y, TILE_NONE)
-				##for v in range(3):
+				##for v in range(2):
 				##	for h in range(3):
 				##		$Board/MemoTileMap.set_cell(x*3+h, y*3+v, TILE_NONE)
 		if cur_cell_ix >= 0:
