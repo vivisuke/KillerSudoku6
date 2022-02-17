@@ -853,7 +853,7 @@ func is_solved():
 	update_nEmpty()
 	return nEmpty == 0 && nDuplicated == 0
 func _process(delta):
-	if !solvedStat:
+	if !solvedStat && !paused:
 		g.elapsedTime += delta
 		var sec = int(g.elapsedTime)
 		var h = sec / (60*60)
@@ -1312,4 +1312,31 @@ func _on_MemoButton_toggled(button_pressed):
 
 
 func _on_PauseButton_pressed():
+	paused = !paused
+	if paused:
+		for ix in range(N_CELLS):
+			if clue_labels[ix].text != "":
+				cell_bit[ix] = num_to_bit(int(clue_labels[ix].text))
+				clue_labels[ix].text = "?"
+			elif input_labels[ix].text != "":
+				cell_bit[ix] = num_to_bit(int(input_labels[ix].text))
+				input_labels[ix].text = "?"
+			else:
+				cell_bit[ix] = 0
+			var lst = []
+			for i in range(N_HORZ):
+				lst.push_back(memo_labels[ix][i].text)
+				memo_labels[ix][i].text = ""
+			memo_text[ix] = lst
+		for i in range(N_HORZ+1):
+			num_buttons[i].disabled = true
+	else:
+		for ix in range(N_CELLS):
+			if clue_labels[ix].text != "":
+				clue_labels[ix].text = bit_to_numstr(cell_bit[ix])
+			elif input_labels[ix].text != "":
+				input_labels[ix].text = bit_to_numstr(cell_bit[ix])
+			for i in range(N_HORZ):
+				memo_labels[ix][i].text = memo_text[ix][i]
+	update_all_status()
 	pass # Replace with function body.

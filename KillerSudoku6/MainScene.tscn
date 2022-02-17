@@ -154,10 +154,6 @@ font_data = ExtResource( 3 )
 size = 12
 font_data = ExtResource( 3 )
 
-[sub_resource type="DynamicFont" id=18]
-size = 12
-font_data = ExtResource( 3 )
-
 [sub_resource type="DynamicFont" id=20]
 size = 12
 font_data = ExtResource( 3 )
@@ -170,6 +166,10 @@ font_data = ExtResource( 3 )
 font_data = ExtResource( 32 )
 
 [sub_resource type="DynamicFont" id=23]
+size = 12
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=18]
 size = 12
 font_data = ExtResource( 3 )
 
@@ -609,30 +609,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="NextButton" type="TextureButton" parent="."]
-margin_left = 435.0
-margin_top = 765.0
-margin_right = 483.0
-margin_bottom = 813.0
-texture_normal = ExtResource( 33 )
-texture_pressed = ExtResource( 34 )
-texture_disabled = ExtResource( 35 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label" type="Label" parent="NextButton"]
-margin_top = 48.0
-margin_right = 48.0
-margin_bottom = 67.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-custom_fonts/font = SubResource( 18 )
-text = "次問題"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="MemoButton" type="TextureButton" parent="."]
 margin_left = 373.0
 margin_top = 605.0
@@ -764,6 +740,30 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="NextButton" type="TextureButton" parent="."]
+margin_left = 435.0
+margin_top = 765.0
+margin_right = 483.0
+margin_bottom = 813.0
+texture_normal = ExtResource( 33 )
+texture_pressed = ExtResource( 34 )
+texture_disabled = ExtResource( 35 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="NextButton"]
+margin_top = 48.0
+margin_right = 48.0
+margin_bottom = 67.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 18 )
+text = "次問題"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [connection signal="pressed" from="TitleBar/BackButton" to="." method="_on_BackButton_pressed"]
 [connection signal="toggled" from="Button1" to="." method="_on_Button1_toggled"]
 [connection signal="toggled" from="Button2" to="." method="_on_Button2_toggled"]
@@ -776,8 +776,8 @@ __meta__ = {
 [connection signal="pressed" from="RedoButton" to="." method="_on_RedoButton_pressed"]
 [connection signal="pressed" from="CheckButton" to="." method="_on_CheckButton_pressed"]
 [connection signal="pressed" from="DeselectButton" to="." method="_on_DeselectButton_pressed"]
-[connection signal="pressed" from="NextButton" to="." method="_on_NextButton_pressed"]
 [connection signal="toggled" from="MemoButton" to="." method="_on_MemoButton_toggled"]
 [connection signal="pressed" from="AutoMemoButton" to="." method="_on_AutoMemoButton_pressed"]
 [connection signal="pressed" from="DelMemoButton" to="." method="_on_DelMemoButton_pressed"]
 [connection signal="pressed" from="PauseButton" to="." method="_on_PauseButton_pressed"]
+[connection signal="pressed" from="NextButton" to="." method="_on_NextButton_pressed"]
