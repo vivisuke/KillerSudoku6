@@ -215,6 +215,7 @@ func gen_quest():
 		if is_proper_quest():
 			break
 	update_cages_sum_labels()
+	solvedStat = false
 func count_1cell_cage():
 	var n = 0
 	for i in range(cage_list.size()):
