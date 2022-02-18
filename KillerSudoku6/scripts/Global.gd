@@ -1,5 +1,9 @@
 extends Node2D
 
+const CELL_WIDTH = 81
+const CELL_WIDTH3 = CELL_WIDTH/3
+const CELL_WIDTH4 = CELL_WIDTH/4
+
 const INIT_N_COINS = 10
 const DAYLY_N_COINS = 2
 const TODAYS_QUEST_N_COINS = 3
@@ -162,3 +166,5 @@ func load_todaysQuest():
 	else:
 		tqSolvedYMD = ""
 		tqSolvedSec = [-1, -1, -1]
+func memo_label_pos(px, py, h, v):
+	return Vector2(px + CELL_WIDTH4*(h+1)-3, py + CELL_WIDTH3*(v+1)+2)

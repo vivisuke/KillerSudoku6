@@ -182,6 +182,7 @@ func _ready():
 	#
 	$CoinButton/NCoinLabel.text = String(g.env[g.KEY_N_COINS])
 	init_labels()
+	$Board.memo_labels = memo_labels
 	#gen_ans()		# 答え生成
 	#show_clues()	# 手がかり数字表示
 	#gen_cages()		# ケージ生成
@@ -203,11 +204,13 @@ func gen_quest():
 		gen_ans()
 		gen_cages()
 		if g.qLevel == LVL_BEGINNER:
-			if count_1cell_cage() < 8:
+			if count_n_cell_cage(1) < 8:
 				continue			# 再生成
 		#	#split_2cell_cage()		# 1セルケージ数が４未満なら２セルケージを分割
 		#el
 		if g.qLevel == LVL_NORMAL:
+			merge_2cell_cage()
+			#if count_n_cell_cage(3) <= 3:
 			merge_2cell_cage()
 		#print_cages()
 		#gen_cages_3x2()		# 3x2 単位で分割
@@ -217,18 +220,18 @@ func gen_quest():
 	update_cages_sum_labels()
 	solvedStat = false
 	g.elapsedTime = 0.0
-func count_1cell_cage():
-	var n = 0
+func count_n_cell_cage(n):
+	var cnt = 0
 	for i in range(cage_list.size()):
-		if cage_list[i][CAGE_IX_LIST].size() == 1: n += 1
-	return n
+		if cage_list[i][CAGE_IX_LIST].size() == n: cnt += 1
+	return cnt
 func find_2cell_cage():		# 2セルケージを探す
 	while true:
 		var ix = rng.randi_range(0, cage_list.size() - 1)
 		if cage_list[ix][CAGE_IX_LIST].size() == 2:
 			return ix
 func split_2cell_cage():		# 1セルケージ数が４未満なら２セルケージを分割
-	if count_1cell_cage() >= 4: return
+	if count_n_cell_cage(1) >= 4: return
 	var cix = find_2cell_cage()		# 2セルケージを探す
 	var cage = cage_list[cix]
 	var ix2 = cage[CAGE_IX_LIST][1]		# ２番めの要素
@@ -260,8 +263,8 @@ func bit_to_num(b):
 func bit_to_numstr(b):
 	if b == 0: return ""
 	return String(bit_to_num(b))
-func memo_label_pos(px, py, h, v):
-	return Vector2(px + CELL_WIDTH4*(h+1)-3, py + CELL_WIDTH3*(v+1)+2)
+#func memo_label_pos(px, py, h, v):
+#	return Vector2(px + CELL_WIDTH4*(h+1)-3, py + CELL_WIDTH3*(v+1)+2)
 func init_labels():
 	# 手がかり数字、入力数字用 Label 生成
 	for y in range(N_VERT):
@@ -293,7 +296,7 @@ func init_labels():
 				for h in range(N_BOX_HORZ):
 					label = MemoLabel.instance()
 					lst.push_back(label)
-					label.rect_position = memo_label_pos(px, py, h, v)
+					label.rect_position = g.memo_label_pos(px, py, h, v)
 					label.text = ""
 					#label.text = String(v*3+h+1)
 					$Board.add_child(label)
@@ -763,7 +766,7 @@ func add_falling_memo(num : int, ix : int):
 	var py = (ix / N_HORZ) * CELL_WIDTH
 	var h = (num-1) % 3
 	var v = (num-1) / 3
-	fc.position = $Board.rect_position + memo_label_pos(px, py, h, v)
+	fc.position = $Board.rect_position + g.memo_label_pos(px, py, h, v)
 	fc.get_node("Label").text = String(num)
 	var th = rng.randf_range(0, 3.1415926535*2)
 	fc.linear_velocity = Vector2(cos(th), sin(th))*100
@@ -836,6 +839,8 @@ func set_num_cursor(num):	# 当該ボタンだけを選択状態に
 func update_all_status():
 	update_undo_redo()
 	update_cell_cursor(cur_num)
+	$Board.cur_num = cur_num
+	$Board.update()
 	##update_NEmptyLabel()
 	update_num_buttons_disabled()
 	check_duplicated()
@@ -915,6 +920,8 @@ func on_solved():
 		if !g.stats[six].has("BestTime") || g.stats[six]["BestTime"] < 1 || int(g.elapsedTime) < g.stats[six]["BestTime"]:
 			g.stats[six]["BestTime"] = int(g.elapsedTime)
 		g.save_stats()
+	cur_cell_ix = -1		# 選択解除
+	cur_num = -1
 	update_all_status()
 func remove_all_memo_at(ix):
 	for i in range(N_HORZ):
