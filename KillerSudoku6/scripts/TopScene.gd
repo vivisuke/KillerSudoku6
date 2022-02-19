@@ -6,6 +6,7 @@ var buttons = []
 onready var g = get_node("/root/Global")
 
 func _ready():
+	g.todaysQuest = false
 	g.load_environment()
 	if !g.env.has(g.KEY_LOGIN_DATE) || g.env[g.KEY_LOGIN_DATE] != g.today_string():
 		g.env[g.KEY_LOGIN_DATE] = g.today_string()

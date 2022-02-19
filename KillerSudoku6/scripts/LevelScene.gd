@@ -10,6 +10,7 @@ onready var g = get_node("/root/Global")
 var QuestPanel = load("res://QuestPanel.tscn")
 
 func _ready():
+	g.todaysQuest = false
 	var txt = ""
 	if g.qLevel == 0: txt = "入門"
 	elif g.qLevel == 1: txt = "初級"

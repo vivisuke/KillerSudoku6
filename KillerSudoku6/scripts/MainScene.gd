@@ -196,8 +196,19 @@ func _ready():
 	pass # Replace with function body.
 func gen_quest():
 	# undone: 問題集以外の場合対応
+	#if g.todaysQuest:		# 今日の問題の場合
+	#	g.qLevel += 1
+	#	if g.qLevel > 2: g.qLevel = 0
+	#elif g.qNumber == 0:		# 問題自動生成の場合
+	#	g.qRandom = true		# 
+	#	gen_qName()
+	#else:					# 問題集の場合
+	#	g.qNumber += 1
+	#	g.qName = "%06d" % g.qNumber
 	if g.qNumber != 0:	# 問題集の場合
 		$NextButton.disabled = g.qNumber > g.nSolved[g.qLevel]
+	elif !g.todaysQuest:		# ランダム生成の場合
+		gen_qName()
 	var stxt = g.qName+String(g.qLevel)
 	if g.qNumber != 0: stxt += "Q"
 	seed(stxt.hash())
@@ -1175,7 +1186,7 @@ func _on_NextButton_pressed():
 		if g.qLevel > 2: g.qLevel = 0
 	elif g.qNumber == 0:		# 問題自動生成の場合
 		g.qRandom = true		# 
-		gen_qName()
+		#gen_qName()
 	else:					# 問題集の場合
 		g.qNumber += 1
 		g.qName = "%06d" % g.qNumber
