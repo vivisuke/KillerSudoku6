@@ -41,7 +41,7 @@ const BIT_9 = 1<<8
 const ALL_BITS = (1<<N_HORZ) - 1
 const BIT_MEMO = 1<<10
 const TILE_NONE = -1
-const TILE_EMPASIZE = 0				# 強調カーソル（薄ピンク）
+const TILE_EMPHASIZE = 0				# 強調カーソル（薄ピンク）
 const TILE_CURSOR = 1
 #const TILE_LTPINK = 1				# 強調カーソル（薄ピンク）
 #const TILE_LTBLUE = 1				# 強調カーソル（薄青）
@@ -740,6 +740,15 @@ func reset_TileMap():
 	for y in range(N_VERT):
 		for x in range(N_HORZ):
 			$Board/TileMap.set_cell(x, y, TILE_NONE)
+func do_emphasize_cell(ix : int):
+	if paused: return
+	reset_TileMap()
+	var n = get_cell_numer(ix)
+	if n != 0:
+		update_cell_cursor(n)
+	var x = ix % N_HORZ
+	var y = ix / N_HORZ
+	$Board/TileMap.set_cell(x, y, TILE_CURSOR)
 func do_emphasize(ix : int, type, fullhouse):
 	reset_TileMap()
 	if paused: return
@@ -813,7 +822,7 @@ func update_cell_cursor(num):		# 選択数字ボタンと同じ数字セルを�
 			for x in range(N_HORZ):
 				var ix = xyToIX(x, y)
 				if num != 0 && get_cell_numer(ix) == num:
-					$Board/TileMap.set_cell(x, y, TILE_EMPASIZE)
+					$Board/TileMap.set_cell(x, y, TILE_EMPHASIZE)
 				else:
 					$Board/TileMap.set_cell(x, y, TILE_NONE)
 				# undone: 背景 ColorRect で描画
@@ -832,7 +841,7 @@ func update_cell_cursor(num):		# 選択数字ボタンと同じ数字セルを�
 				##	for h in range(N_BOX_HORZ):
 				##		$Board/MemoTileMap.set_cell(x*3+h, y*3+v, TILE_NONE)
 		if cur_cell_ix >= 0:
-			do_emphasize(cur_cell_ix, CELL, false)
+			do_emphasize_cell(cur_cell_ix)
 	pass
 func set_num_cursor(num):	# 当該ボタンだけを選択状態に
 	cur_num = num
@@ -1008,7 +1017,7 @@ func _input(event):
 					cur_cell_ix = -1
 				else:
 					cur_cell_ix = ix
-					do_emphasize(ix, CELL, false)
+					do_emphasize_cell(ix)
 				update_all_status()
 				return
 			if cur_num == 0:	# 削除ボタン選択中

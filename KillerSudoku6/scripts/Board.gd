@@ -11,7 +11,7 @@ const BOARD_WIDTH = CELL_WIDTH * N_HORZ
 const BOX_WIDTH = CELL_WIDTH * N_HORZ / 2
 const BOX_HEIGHT = CELL_WIDTH * N_VERT / 3
 
-const COL = Color("#e0e0e0")
+const COL = Color("#d0d0d0")
 const MEMO_COL = Color("#ffff00")		# 黄色
 
 var memo_labels = []		# メモ（候補数字）用ラベル配列（２次元）
