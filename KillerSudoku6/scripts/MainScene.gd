@@ -1318,8 +1318,8 @@ func _on_DelMemoButton_pressed():
 	var lst = get_memo()
 	push_to_undo_stack([UNDO_TYPE_DEL_MEMO, lst])
 	remove_all_memo()
+	update_all_status()
 	g.auto_save(true, get_cell_state())
-
 
 func _on_MemoButton_toggled(button_pressed):
 	memo_mode = button_pressed
