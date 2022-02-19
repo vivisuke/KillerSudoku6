@@ -41,10 +41,12 @@ const BIT_9 = 1<<8
 const ALL_BITS = (1<<N_HORZ) - 1
 const BIT_MEMO = 1<<10
 const TILE_NONE = -1
-const TILE_CURSOR = 0
-const TILE_LTBLUE = 1				# 強調カーソル（薄青）
-const TILE_LTORANGE = 2				# 強調カーソル（薄橙）
-const TILE_PINK = 3					# 強調カーソル（薄ピンク）
+const TILE_EMPASIZE = 0				# 強調カーソル（薄ピンク）
+const TILE_CURSOR = 1
+#const TILE_LTPINK = 1				# 強調カーソル（薄ピンク）
+#const TILE_LTBLUE = 1				# 強調カーソル（薄青）
+#const TILE_LTORANGE = 2				# 強調カーソル（薄橙）
+#const TILE_PINK = 3					# 強調カーソル（薄ピンク）
 const COLOR_INCORRECT = Color.red
 const COLOR_DUP = Color.red
 const COLOR_CLUE = Color.black
@@ -211,7 +213,7 @@ func gen_quest():
 		if g.qLevel == LVL_NORMAL:
 			merge_2cell_cage()
 			#if count_n_cell_cage(3) <= 3:
-			merge_2cell_cage()
+			#merge_2cell_cage()
 		#print_cages()
 		#gen_cages_3x2()		# 3x2 単位で分割
 		#break
@@ -490,15 +492,15 @@ func gen_cages():
 	for ix in range(cage_list.size()):
 		var lst = cage_list[ix][1]
 		for k in range(lst.size()): cage_ix[lst[k]] = ix
-	# undone: 入門問題の場合は１セルケージを8つ生成
-	if g.qLevel == LVL_BEGINNER:
-		var cnt = 8
-		while cnt != 0:
+	# undone: 入門問題の場合は１セルケージを8つ、初級の場合は２つ生成
+	if g.qLevel < LVL_NORMAL:
+		var cnt = 4 if g.qLevel == LVL_BEGINNER else 2
+		while cnt > 0:
 			var ix = rng.randi_range(0, N_CELLS-1)
 			if cage_ix[ix] >= 0: continue
 			cage_ix[ix] = cage_list.size()
 			cage_list.push_back([0, [ix]])
-			cnt -= 4
+			cnt -= 1
 	#
 	var ar = []
 	for ix in range(N_CELLS): ar.push_back(ix)
@@ -811,7 +813,7 @@ func update_cell_cursor(num):		# 選択数字ボタンと同じ数字セルを�
 			for x in range(N_HORZ):
 				var ix = xyToIX(x, y)
 				if num != 0 && get_cell_numer(ix) == num:
-					$Board/TileMap.set_cell(x, y, TILE_CURSOR)
+					$Board/TileMap.set_cell(x, y, TILE_EMPASIZE)
 				else:
 					$Board/TileMap.set_cell(x, y, TILE_NONE)
 				# undone: 背景 ColorRect で描画
