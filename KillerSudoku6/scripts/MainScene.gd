@@ -1405,12 +1405,14 @@ func _on_PauseButton_pressed():
 	update_all_status()
 	pass # Replace with function body.
 
+func is_1cell_cage(ix):
+	return cage_list[cage_ix[ix]][CAGE_IX_LIST].size() == 1
 
 func _on_RestartButton_pressed():
 	if paused: return		# ポーズ中
 	do_deselect()	# 選択解除
 	for ix in range(N_CELLS):
-		if input_labels[ix].text != "":
+		if input_labels[ix].text != "" && !is_1cell_cage(ix):
 			add_falling_char(input_labels[ix].text, ix)
 			input_labels[ix].text = ""
 		for i in range(N_HORZ):
