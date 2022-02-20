@@ -169,6 +169,9 @@ func _ready():
 	#	var sd = 2
 	#	seed(sd)
 	#	rng.set_seed(sd)
+	g.load_settings()
+	sound = !g.settings.has("Sound") || g.settings["Sound"]
+	$SoundButton.pressed = sound
 	cell_bit.resize(N_CELLS)
 	candidates_bit.resize(N_CELLS)
 	cage_ix.resize(N_CELLS)
