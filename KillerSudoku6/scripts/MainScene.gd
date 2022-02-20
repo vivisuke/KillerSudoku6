@@ -1424,3 +1424,10 @@ func _on_RestartButton_pressed():
 	update_all_status()
 	num_button_pressed(cur_num, true)
 	pass # Replace with function body.
+
+func _on_SoundButton_toggled(button_pressed):
+	print("sound = ", button_pressed)
+	sound = button_pressed
+	g.settings["Sound"] = sound
+	g.save_settings()
+	pass # Replace with function body.
