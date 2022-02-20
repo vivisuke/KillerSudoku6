@@ -1,4 +1,4 @@
-[gd_scene load_steps=69 format=2]
+[gd_scene load_steps=71 format=2]
 
 [ext_resource path="res://images/leftward_white.png" type="Texture" id=1]
 [ext_resource path="res://images/leftward_black.png" type="Texture" id=2]
@@ -104,6 +104,37 @@ font_data = ExtResource( 32 )
 0/shape_one_way_margin = 0.0
 0/shapes = [  ]
 0/z_index = 0
+
+[sub_resource type="Shader" id=24]
+code = "shader_type canvas_item;
+
+uniform vec2 center;
+uniform float force;
+uniform float size;
+uniform float tichness;
+
+void fragment() {
+	float ratio = SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y;
+	vec2 scaledUV = ( SCREEN_UV - vec2(0.5, 0.0) ) / vec2(ratio, 1.0) + vec2(0.5, 0.0);
+	float mask = (1.0 - smoothstep(size-0.1, size, length(scaledUV - center))) *
+					smoothstep(size-tichness - 0.1, size-tichness, length(scaledUV - center));
+	vec2 disp = normalize(scaledUV - center) * force * mask;
+	//COLOR = vec4(SCREEN_UV - disp, 0.0, 1.0);
+	COLOR = texture(SCREEN_TEXTURE, SCREEN_UV - disp);
+	//COLOR.rgb = vec3(mask);
+	
+	//COLOR = vec4(UV, 0.0, 1.0);
+	//COLOR = texture(TEXTURE, UV - vec2(0.5, 0));
+
+}
+"
+
+[sub_resource type="ShaderMaterial" id=25]
+shader = SubResource( 24 )
+shader_param/center = Vector2( 0.5, 0.5 )
+shader_param/force = 0.024
+shader_param/size = 2.0
+shader_param/tichness = 0.1
 
 [sub_resource type="DynamicFont" id=19]
 font_data = ExtResource( 3 )
@@ -302,6 +333,19 @@ __meta__ = {
 [node name="HintGuide" type="ColorRect" parent="Board"]
 margin_right = 477.0
 margin_bottom = 477.0
+color = Color( 1, 1, 1, 0 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+visible = false
+material = SubResource( 25 )
+margin_right = 500.0
+margin_bottom = 900.0
+mouse_filter = 2
 color = Color( 1, 1, 1, 0 )
 __meta__ = {
 "_edit_use_anchors_": false

@@ -191,6 +191,7 @@ func _ready():
 	#is_proper_quest()
 	gen_quest()
 	g.elapsedTime = 0.0
+	$CanvasLayer/ColorRect.material.set_shader_param("size", 0)
 	update_all_status()
 	#
 	pass # Replace with function body.
@@ -910,11 +911,18 @@ func _process(delta):
 		var m = sec / 60
 		sec -= m * 60
 		$TimeLabel.text = "%02d:%02d:%02d" % [h, m, sec]
+	if shock_wave_timer >= 0:
+		shock_wave_timer += delta
+		$CanvasLayer/ColorRect.material.set_shader_param("size", shock_wave_timer)
+		if shock_wave_timer > 2:
+			shock_wave_timer = -1.0
 	pass
 func is_all_solved_todaysQuest():
 	return g.tqSolvedSec[0] >= 0 && g.tqSolvedSec[1] >= 0 && g.tqSolvedSec[2] >= 0
 func on_solved():
 	solvedStat = true
+	$CanvasLayer/ColorRect.show()
+	shock_wave_timer = 0.0      # start shock wave
 	if sound:
 		$AudioSolved.play()		# （どんっ）効果音再生
 	var six = g.qLevel		# g.stat インデックス
