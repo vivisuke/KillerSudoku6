@@ -1402,3 +1402,7 @@ func _on_PauseButton_pressed():
 		update_cages_sum_labels()
 	update_all_status()
 	pass # Replace with function body.
+
+
+func _on_RestartButton_pressed():
+	pass # Replace with function body.
