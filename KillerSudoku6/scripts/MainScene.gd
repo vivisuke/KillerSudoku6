@@ -230,9 +230,17 @@ func gen_quest():
 		#break
 		if is_proper_quest():
 			break
+	fill_1cell_cages()
 	update_cages_sum_labels()
 	solvedStat = false
 	g.elapsedTime = 0.0
+func fill_1cell_cages():
+	for ci in range(cage_list.size()):
+		var cage = cage_list[ci]
+		if cage[CAGE_IX_LIST].size() == 1:
+			var ix = cage[CAGE_IX_LIST][0]
+			cell_bit[ix] = num_to_bit(cage[CAGE_SUM])
+			input_labels[ix].text = String(cage[CAGE_SUM])
 func count_n_cell_cage(n):
 	var cnt = 0
 	for i in range(cage_list.size()):
