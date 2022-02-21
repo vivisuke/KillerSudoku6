@@ -707,6 +707,14 @@ func is_duplicated(ix : int):
 			var ix3 = xyToIX(x0+h, y0+v)
 			if ix3 != ix && get_cell_numer(ix3) == n:
 				return true
+	# ケージ内の重複チェック
+	var cage = cage_list[cage_ix[ix]]
+	if cage[CAGE_IX_LIST].size() != 1:
+		#var bit = cell_bit[ix]
+		var lst = cage[CAGE_IX_LIST]
+		for i in range(lst.size()):
+			if lst[i] != ix && get_cell_numer(lst[i]) == n:
+				return true
 	return false
 func check_duplicated():
 	nDuplicated = 0
@@ -826,8 +834,8 @@ func get_cell_state() -> Array:
 			s.push_back(get_memo_bits(ix) + BIT_MEMO)
 	return s
 func get_cell_numer(ix) -> int:		# ix 位置に入っている数字の値を返す、0 for 空欄
-	if clue_labels[ix].text != "":
-		return int(clue_labels[ix].text)
+	#if clue_labels[ix].text != "":
+	#	return int(clue_labels[ix].text)
 	if input_labels[ix].text != "":
 		return int(input_labels[ix].text)
 	return 0
