@@ -34,12 +34,12 @@ var candidates_bit = []		# 入力可能ビット論理和
 var cell_bit = []			# 現在の状態
 var saved_data = {}			# 自動保存データ
 
-const AutoSaveFileName	= "user://NumberPlace_autosave.dat"		# 自動保存ファイル
-const EnvFileName	= "user://NumberPlace_env.dat"				# 環境ファイル
-const SettingsFileName	= "user://NumberPlace_stgs.dat"
-const StatsFileName		= "user://NumberPlace_stats.dat"
-const NSolvedFileName	= "user://NumberPlace_nSolved.dat"
-const TodaysQuestFileName	= "user://NumberPlace_todaysQuest.dat"
+const AutoSaveFileName	= "user://KillerSudoku6_autosave.dat"		# 自動保存ファイル
+const EnvFileName	= "user://KillerSudoku6_env.dat"				# 環境ファイル
+const SettingsFileName	= "user://KillerSudoku6_stgs.dat"
+const StatsFileName		= "user://KillerSudoku6_stats.dat"
+const NSolvedFileName	= "user://KillerSudoku6_nSolved.dat"
+const TodaysQuestFileName	= "user://KillerSudoku6_todaysQuest.dat"
 
 func _ready():
 	pass # Replace with function body.
