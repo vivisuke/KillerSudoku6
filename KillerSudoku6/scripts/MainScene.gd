@@ -1145,6 +1145,10 @@ func num_button_pressed(num : int, button_pressed):
 					if !solvedStat && is_solved():
 						on_solved()
 				pass
+			else:		# メモ数字エディットモード
+				if get_cell_numer(cur_cell_ix) == 0:	# 数字が入っていない場合
+					push_to_undo_stack([UNDO_TYPE_MEMO, cur_cell_ix, num])
+					flip_memo_num(cur_cell_ix, num)
 		pass
 	else:	# セルが選択されていない場合
 		if button_pressed:
