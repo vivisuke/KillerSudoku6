@@ -878,12 +878,17 @@ func set_num_cursor(num):	# 当該ボタンだけを選択状態に
 	cur_num = num
 	for i in range(num_buttons.size()):
 		num_buttons[i].pressed = (i == num)
+func update_NEmptyLabel():
+	nEmpty = 0
+	for ix in range(N_CELLS):
+		if get_cell_numer(ix) == 0: nEmpty += 1
+	$NEmptyLabel.text = "空欄数: %d" % nEmpty
 func update_all_status():
 	update_undo_redo()
 	update_cell_cursor(cur_num)
 	$Board.cur_num = cur_num
 	$Board.update()
-	##update_NEmptyLabel()
+	update_NEmptyLabel()
 	update_num_buttons_disabled()
 	check_duplicated()
 	check_cages()
