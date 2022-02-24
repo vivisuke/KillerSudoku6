@@ -566,13 +566,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="AudioNumClicked" type="AudioStreamPlayer2D" parent="."]
+[node name="AudioNumClicked" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 17 )
 
-[node name="AudioNumCompleted" type="AudioStreamPlayer2D" parent="."]
+[node name="AudioNumCompleted" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 18 )
 
-[node name="AudioSolved" type="AudioStreamPlayer2D" parent="."]
+[node name="AudioSolved" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 16 )
 
 [node name="UndoButton" type="TextureButton" parent="."]

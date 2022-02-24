@@ -1124,7 +1124,7 @@ func num_button_pressed(num : int, button_pressed):
 				input_labels[cur_cell_ix].text = ""
 			##else:
 			##	remove_all_memo_at(cur_cell_ix)
-		else:
+		else:		# 数字ボタン押下の場合
 			if !memo_mode:
 				if button_pressed:
 					var old = get_cell_numer(cur_cell_ix)
@@ -1154,6 +1154,7 @@ func num_button_pressed(num : int, button_pressed):
 				if get_cell_numer(cur_cell_ix) == 0:	# 数字が入っていない場合
 					push_to_undo_stack([UNDO_TYPE_MEMO, cur_cell_ix, num])
 					flip_memo_num(cur_cell_ix, num)
+				set_num_cursor(-1)
 		pass
 	else:	# セルが選択されていない場合
 		if button_pressed:
