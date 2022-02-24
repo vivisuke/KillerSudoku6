@@ -104,6 +104,8 @@ var menuPopuped = false
 var hint_showed = false
 var memo_mode = false		# メモ（候補数字）エディットモード
 var in_button_pressed = false	# ボタン押下処理中
+var hint_ix = -1			# ヒントを入れる箇所
+var hint_count_down = 0.0	# 0.0より大きい：ヒント表示カウントダウン中
 var hint_next_pos			# 次ボタン位置
 var hint_next_pos0			# 次ボタン初期位置
 var hint_next_vy			# 次ボタン速度
@@ -112,7 +114,7 @@ var saved_cell_data = []
 #var hint_next_scale = 1.0	# ヒント次ボタン表示スケール
 #var hint_num				# ヒントで確定する数字、[1, 9]
 var hint_numstr				# ヒントで確定する数字、[1, 9]
-var hint_ix = 0				# 0, 1, 2, ...
+#var hint_ix = 0				# 0, 1, 2, ...
 var hint_texts = []			# ヒントテキスト配列
 #var restarted = false
 var saved_time
@@ -927,6 +929,20 @@ func _process(delta):
 		var m = sec / 60
 		sec -= m * 60
 		$TimeLabel.text = "%02d:%02d:%02d" % [h, m, sec]
+	if hint_count_down > 0.0:
+		hint_count_down -= delta
+		if hint_count_down <= 0.0:
+			var num = bit_to_num(ans_bit[hint_ix])
+			push_to_undo_stack([UNDO_TYPE_CELL, hint_ix, 0, num, [], 0])
+			input_labels[hint_ix].text = String(num)
+			if is_solved():
+				on_solved()
+			update_all_status()
+			input_num = num
+			sound_effect()
+		else:
+			var num = rng.randi_range(1, N_HORZ)
+			input_labels[hint_ix].text = String(num)
 	if shock_wave_timer >= 0:
 		shock_wave_timer += delta
 		$CanvasLayer/ColorRect.material.set_shader_param("size", shock_wave_timer)
@@ -1455,16 +1471,19 @@ func _on_SoundButton_toggled(button_pressed):
 
 
 func _on_HintButton_pressed():
+	if hint_count_down > 0.0: return
 	if paused || solvedStat || nEmpty == 0: return
 	var lst = []		# 空欄リスト
 	for ix in range(N_CELLS):
 		if get_cell_numer(ix) == 0:
 			lst.push_back(ix)
-	var ix = lst[0] if lst.size() == 1 else lst[rng.randi_range(0, lst.size() - 1)]
-	var num = bit_to_num(ans_bit[ix])
-	push_to_undo_stack([UNDO_TYPE_CELL, ix, 0, num, [], 0])
-	input_labels[ix].text = String(num)
-	if is_solved():
-		on_solved()
-	update_all_status()
+	hint_ix = lst[0] if lst.size() == 1 else lst[rng.randi_range(0, lst.size() - 1)]
+	hint_count_down = 0.5
+	#var ix = lst[0] if lst.size() == 1 else lst[rng.randi_range(0, lst.size() - 1)]
+	#var num = bit_to_num(ans_bit[ix])
+	#push_to_undo_stack([UNDO_TYPE_CELL, ix, 0, num, [], 0])
+	#input_labels[ix].text = String(num)
+	#if is_solved():
+	#	on_solved()
+	#update_all_status()
 	pass # Replace with function body.
