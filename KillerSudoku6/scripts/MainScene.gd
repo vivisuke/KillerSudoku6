@@ -913,6 +913,7 @@ func update_all_status():
 		$MessLabel.text = "セルに入れる数字ボタンをクリックしてください。"
 	else:
 		$MessLabel.text = "数字ボタンまたは空セルをクリックしてください。"
+	$CoinButton/NCoinLabel.text = String(g.env[g.KEY_N_COINS])
 func update_nEmpty():
 	nEmpty = 0
 	for ix in range(N_CELLS):
@@ -1473,6 +1474,9 @@ func _on_SoundButton_toggled(button_pressed):
 func _on_HintButton_pressed():
 	if hint_count_down > 0.0: return
 	if paused || solvedStat || nEmpty == 0: return
+	if g.env[g.KEY_N_COINS] < 1: return
+	g.env[g.KEY_N_COINS] -= 1
+	g.save_environment()
 	var lst = []		# 空欄リスト
 	for ix in range(N_CELLS):
 		if get_cell_numer(ix) == 0:
