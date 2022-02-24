@@ -1452,3 +1452,19 @@ func _on_SoundButton_toggled(button_pressed):
 	g.settings["Sound"] = sound
 	g.save_settings()
 	pass # Replace with function body.
+
+
+func _on_HintButton_pressed():
+	if paused || solvedStat || nEmpty == 0: return
+	var lst = []		# 空欄リスト
+	for ix in range(N_CELLS):
+		if get_cell_numer(ix) == 0:
+			lst.push_back(ix)
+	var ix = lst[0] if lst.size() == 1 else lst[rng.randi_range(0, lst.size() - 1)]
+	var num = bit_to_num(ans_bit[ix])
+	push_to_undo_stack([UNDO_TYPE_CELL, ix, 0, num, [], 0])
+	input_labels[ix].text = String(num)
+	if is_solved():
+		on_solved()
+	update_all_status()
+	pass # Replace with function body.

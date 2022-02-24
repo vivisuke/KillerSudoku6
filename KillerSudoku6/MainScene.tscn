@@ -909,6 +909,7 @@ __meta__ = {
 [connection signal="pressed" from="UndoButton" to="." method="_on_UndoButton_pressed"]
 [connection signal="pressed" from="RedoButton" to="." method="_on_RedoButton_pressed"]
 [connection signal="pressed" from="CheckButton" to="." method="_on_CheckButton_pressed"]
+[connection signal="pressed" from="HintButton" to="." method="_on_HintButton_pressed"]
 [connection signal="pressed" from="DeselectButton" to="." method="_on_DeselectButton_pressed"]
 [connection signal="toggled" from="MemoButton" to="." method="_on_MemoButton_toggled"]
 [connection signal="pressed" from="AutoMemoButton" to="." method="_on_AutoMemoButton_pressed"]
