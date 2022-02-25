@@ -977,7 +977,10 @@ func _process(delta):
 		hint_count_down -= delta
 		if hint_count_down <= 0.0:
 			var num = bit_to_num(ans_bit[hint_ix])
-			push_to_undo_stack([UNDO_TYPE_CELL, hint_ix, 0, num, [], 0])
+			var lst = remove_memo_num(hint_ix, num)
+			var mb = get_memo_bits(hint_ix)
+			remove_all_memo_at(hint_ix)
+			push_to_undo_stack([UNDO_TYPE_CELL, hint_ix, 0, num, lst, mb])
 			input_labels[hint_ix].text = String(num)
 			if is_solved():
 				on_solved()
