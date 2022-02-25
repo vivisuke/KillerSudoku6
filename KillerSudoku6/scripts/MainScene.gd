@@ -214,7 +214,9 @@ func gen_quest():
 	if g.qNumber != 0:	# 問題集の場合
 		$NextButton.disabled = g.qNumber > g.nSolved[g.qLevel]
 	elif !g.todaysQuest:		# ランダム生成の場合
-		gen_qName()
+		if g.qName == "":
+			gen_qName()
+			$TitleBar/Label.text = titleText()
 	var stxt = g.qName+String(g.qLevel)
 	if g.qNumber != 0: stxt += "Q"
 	seed(stxt.hash())
@@ -1228,6 +1230,7 @@ func _on_CheckButton_pressed():
 func gen_qName():
 	g.qRandom = true
 	g.qName = ""
+	rng.randomize()
 	for i in range(15):
 		var r = rng.randi_range(0, 10+26-1)
 		if r < 10: g.qName += String(r+1)
@@ -1242,7 +1245,7 @@ func _on_NextButton_pressed():
 		if g.qLevel > 2: g.qLevel = 0
 	elif g.qNumber == 0:		# 問題自動生成の場合
 		g.qRandom = true		# 
-		#gen_qName()
+		gen_qName()
 	else:					# 問題集の場合
 		g.qNumber += 1
 		g.qName = "%06d" % g.qNumber
