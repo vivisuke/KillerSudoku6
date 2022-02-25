@@ -133,6 +133,7 @@ var nAnswer = 0				# 解答数
 var cage_labels = []		# ケージ合計数字用ラベル配列
 var clue_labels = []		# 手がかり数字用ラベル配列
 var input_labels = []		# 入力数字用ラベル配列
+var ans_num = []			# 解答の各セル数値、1～N_HORZ
 var ans_bit = []			# 解答の各セル数値（0 | BIT_1 | BIT_2 | ... | BIT_9）
 var cell_bit = []			# 各セル数値（0 | BIT_1 | BIT_2 | ... | BIT_9）
 var quest_cages = []		# クエストケージリスト配列、要素：[sum, ix1, ix2, ...]
@@ -175,6 +176,8 @@ func _ready():
 	sound = !g.settings.has("Sound") || g.settings["Sound"]
 	$SoundButton.pressed = sound
 	cell_bit.resize(N_CELLS)
+	ans_num.resize(N_CELLS)
+	ans_bit.resize(N_CELLS)
 	candidates_bit.resize(N_CELLS)
 	cage_ix.resize(N_CELLS)
 	line_used.resize(N_HORZ)
@@ -236,12 +239,18 @@ func gen_quest():
 		#print_cages()
 		#gen_cages_3x2()		# 3x2 単位で分割
 		#break
+		#ans_bit = cell_bit.duplicate()
+		#break
 		if is_proper_quest():
 			break
+	#print_ans()
 	fill_1cell_cages()
 	update_cages_sum_labels()
 	solvedStat = false
 	g.elapsedTime = 0.0
+	#ans_bit = cell_bit.duplicate()
+	print_ans()
+	print_ans_num()
 func fill_1cell_cages():
 	for ci in range(cage_list.size()):
 		var cage = cage_list[ci]
@@ -382,6 +391,7 @@ func gen_ans_sub(ix : int, line_used):
 	cell_bit[ix] = 0
 	return false;
 func gen_ans():		# 解答生成
+	print("gen_ans():")
 	for i in range(N_CELLS):
 		#clue_labels[i].text = "?"
 		input_labels[i].text = ""
@@ -398,7 +408,11 @@ func gen_ans():		# 解答生成
 	gen_ans_sub(N_HORZ, 0)
 	print_cells()
 	#update_cell_labels()
-	ans_bit = cell_bit.duplicate()
+	#ans_bit = cell_bit.duplicate()
+	for i in range(N_CELLS): ans_bit[i] = cell_bit[i]
+	for i in range(N_CELLS): ans_num[i] = bit_to_num(cell_bit[i])
+	#print_ans()
+	#print_ans_num()
 	for i in range(N_CELLS): input_labels[i].text = ""		# 入力ラベル全消去
 	#for i in range(N_CELLS): input_labels[i].text = bit_to_numstr(cell_bit[i])
 	pass
@@ -408,6 +422,26 @@ func print_cells():
 		var lst = []
 		for x in range(N_HORZ):
 			lst.push_back(bit_to_num(cell_bit[ix]))
+			ix += 1
+		print(lst)
+	print("")
+func print_ans_num():
+	print("ans_num:")
+	var ix = 0
+	for y in range(N_VERT):
+		var lst = []
+		for x in range(N_HORZ):
+			lst.push_back(ans_num[ix])
+			ix += 1
+		print(lst)
+	print("")
+func print_ans():
+	print("ans_bit:")
+	var ix = 0
+	for y in range(N_VERT):
+		var lst = []
+		for x in range(N_HORZ):
+			lst.push_back(bit_to_num(ans_bit[ix]))
 			ix += 1
 		print(lst)
 	print("")
@@ -442,8 +476,8 @@ func merge_2cell_cage():	# 2セルケージ２つをマージし4セルに
 		if lst2.empty(): continue
 		var ix2 = lst2[0] if lst2.size() == 1 else lst2[rng.randi_range(0, lst2.size() - 1)]
 		var cix2 = cage_ix[ix2]
-		print("cix = ", cage_list[cix])
-		print("cix2 = ", cage_list[cix2])
+		#print("cix = ", cage_list[cix])
+		#print("cix2 = ", cage_list[cix2])
 		for i in range(cage_list[cix2][CAGE_IX_LIST].size()):
 			cage_ix[cage_list[cix2][CAGE_IX_LIST][i]] = cix
 		cage_list[cix][CAGE_IX_LIST] += cage_list[cix2][CAGE_IX_LIST]
@@ -617,14 +651,20 @@ func ipq_sub(cix, lix, ub, sum) -> bool:	# false for 解の個数が２以上
 		nAnswer += 1
 		print(nAnswer, ":")
 		print_cells()	# cell_bit の内容を表示
+		for i in range(N_CELLS):
+			ans_num[i] = bit_to_num(cell_bit[i])
+			ans_bit[i] = cell_bit[i]
+		print_ans()
+		print_ans_num()
 	else:
 		var cage = cage_list[cix]
 		if cage[CAGE_SUM] == 0:
 			ipq_sub(cix+1, 0, 0, 0)
 			return nAnswer < 2
-		if cage[CAGE_IX_LIST].size() == 1:
-			print("cage[CAGE_IX_LIST].size() == 1")
+		#if cage[CAGE_IX_LIST].size() == 1:
+		#	print("cage[CAGE_IX_LIST].size() == 1")
 		var ix = cage[CAGE_IX_LIST][lix]
+		assert( ix >= 0 && ix < N_CELLS )
 		var x = ix % N_HORZ
 		var y = ix / N_HORZ
 		var x3 = x / 3
@@ -659,6 +699,7 @@ func ipq_sub(cix, lix, ub, sum) -> bool:	# false for 解の個数が２以上
 				line_used[y] ^= b
 				column_used[x] ^= b
 				box_used[bix] ^= b
+		#assert( ix >= 0 && ix < N_CELLS )
 		cell_bit[ix] = 0
 	return nAnswer < 2
 # cage_list をチェック、手がかり数字は無し
