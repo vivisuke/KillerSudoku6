@@ -1126,7 +1126,8 @@ func _input(event):
 		if event.as_text() == "W" :
 			shock_wave_timer = 0.0      # start shock wave
 		var n = int(event.as_text())
-		if n >= 1 && n <= 9:
+		#if n < 1 || n > N_HORZ: return
+		if n >= 1 && n <= N_HORZ:
 			num_button_pressed(n, true)
 	pass
 func num_button_pressed(num : int, button_pressed):
