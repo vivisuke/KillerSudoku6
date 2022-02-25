@@ -134,7 +134,7 @@ var cage_labels = []		# ケージ合計数字用ラベル配列
 var clue_labels = []		# 手がかり数字用ラベル配列
 var input_labels = []		# 入力数字用ラベル配列
 var ans_num = []			# 解答の各セル数値、1～N_HORZ
-var ans_bit = []			# 解答の各セル数値（0 | BIT_1 | BIT_2 | ... | BIT_9）
+#var ans_bit = []			# 解答の各セル数値（0 | BIT_1 | BIT_2 | ... | BIT_9）
 var cell_bit = []			# 各セル数値（0 | BIT_1 | BIT_2 | ... | BIT_9）
 var quest_cages = []		# クエストケージリスト配列、要素：[sum, ix1, ix2, ...]
 var cage_list = []			# ケージリスト配列、要素：IX_CAGE_XXX
@@ -177,7 +177,7 @@ func _ready():
 	$SoundButton.pressed = sound
 	cell_bit.resize(N_CELLS)
 	ans_num.resize(N_CELLS)
-	ans_bit.resize(N_CELLS)
+	#ans_bit.resize(N_CELLS)
 	candidates_bit.resize(N_CELLS)
 	cage_ix.resize(N_CELLS)
 	line_used.resize(N_HORZ)
@@ -249,7 +249,7 @@ func gen_quest():
 	solvedStat = false
 	g.elapsedTime = 0.0
 	#ans_bit = cell_bit.duplicate()
-	print_ans()
+	#print_ans()
 	print_ans_num()
 func fill_1cell_cages():
 	for ci in range(cage_list.size()):
@@ -409,7 +409,7 @@ func gen_ans():		# 解答生成
 	print_cells()
 	#update_cell_labels()
 	#ans_bit = cell_bit.duplicate()
-	for i in range(N_CELLS): ans_bit[i] = cell_bit[i]
+	#for i in range(N_CELLS): ans_bit[i] = cell_bit[i]
 	for i in range(N_CELLS): ans_num[i] = bit_to_num(cell_bit[i])
 	#print_ans()
 	#print_ans_num()
@@ -435,16 +435,16 @@ func print_ans_num():
 			ix += 1
 		print(lst)
 	print("")
-func print_ans():
-	print("ans_bit:")
-	var ix = 0
-	for y in range(N_VERT):
-		var lst = []
-		for x in range(N_HORZ):
-			lst.push_back(bit_to_num(ans_bit[ix]))
-			ix += 1
-		print(lst)
-	print("")
+#func print_ans():
+#	print("ans_bit:")
+#	var ix = 0
+#	for y in range(N_VERT):
+#		var lst = []
+#		for x in range(N_HORZ):
+#			lst.push_back(bit_to_num(ans_bit[ix]))
+#			ix += 1
+#		print(lst)
+#	print("")
 func print_cages():
 	for i in range(cage_list.size()):
 		print(cage_list[i])
@@ -653,8 +653,8 @@ func ipq_sub(cix, lix, ub, sum) -> bool:	# false for 解の個数が２以上
 		print_cells()	# cell_bit の内容を表示
 		for i in range(N_CELLS):
 			ans_num[i] = bit_to_num(cell_bit[i])
-			ans_bit[i] = cell_bit[i]
-		print_ans()
+			#ans_bit[i] = cell_bit[i]
+		#print_ans()
 		print_ans_num()
 	else:
 		var cage = cage_list[cix]
@@ -976,7 +976,8 @@ func _process(delta):
 	if hint_count_down > 0.0:
 		hint_count_down -= delta
 		if hint_count_down <= 0.0:
-			var num = bit_to_num(ans_bit[hint_ix])
+			#var num = bit_to_num(ans_bit[hint_ix])
+			var num = ans_num[hint_ix]
 			var lst = remove_memo_num(hint_ix, num)
 			var mb = get_memo_bits(hint_ix)
 			remove_all_memo_at(hint_ix)
@@ -1263,7 +1264,7 @@ func _on_CheckButton_pressed():
 	g.save_environment()
 	var err = false
 	for ix in range(N_CELLS):
-		if input_labels[ix].text != "" && input_labels[ix].text != bit_to_numstr(ans_bit[ix]):
+		if input_labels[ix].text != "" && int(input_labels[ix].text) != ans_num[ix]:
 			err = true
 			input_labels[ix].add_color_override("font_color", COLOR_INCORRECT)
 	if err:
