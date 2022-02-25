@@ -1268,8 +1268,10 @@ func _on_CheckButton_pressed():
 			input_labels[ix].add_color_override("font_color", COLOR_INCORRECT)
 	if err:
 		$MessLabel.text = "間違って入っている数字（赤色）があります。"
+		$AudioIncorrect.play()
 	else:
 		$MessLabel.text = "間違って入っている数字はありません。"
+		$AudioCorrect.play()
 	pass # Replace with function body.
 
 func gen_qName():
