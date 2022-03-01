@@ -1001,6 +1001,7 @@ func is_all_solved_todaysQuest():
 	return g.tqSolvedSec[0] >= 0 && g.tqSolvedSec[1] >= 0 && g.tqSolvedSec[2] >= 0
 func on_solved():
 	solvedStat = true
+	$FakeConfettiParticles.emitting = true
 	$CanvasLayer/ColorRect.show()
 	shock_wave_timer = 0.0      # start shock wave
 	if sound:
@@ -1287,6 +1288,7 @@ func gen_qName():
 		else: g.qName += "%c" % (r - 10 + 0x61)		# 0x61 is 'a'
 func _on_NextButton_pressed():
 	if paused: return		# ポーズ中
+	$FakeConfettiParticles.emitting = false
 	g.auto_save(false, [])
 	saved_cell_data = []
 	##$SolvedLayer.hide()
