@@ -40,7 +40,8 @@ var visibility_rect = Rect2(0.0, 0.0, 500.0, 900.0)
 ## The color/s of the particles.
 #export (Array) 
 var colors = [
-	Color("#008751"),
+	#Color("#008751"),
+	Color("#ffffff"),
 	Color("#00e436"),
 	Color("#29adff"),
 	Color("#7e2553"),
