@@ -26,7 +26,7 @@ var random_amount = true
 ## If the particles are squares, `size` is the length of their sides.
 ## If the particles are circles, `size` is their radius.
 #export (float) 
-var size = 3.0
+var size = 6.0
 ## If `true`, the size of the particles can be a
 ## random number between `size / 2` and `size * 2`.
 ##
