@@ -106,6 +106,7 @@ var memo_mode = false		# メモ（候補数字）エディットモード
 var in_button_pressed = false	# ボタン押下処理中
 var hint_ix = -1			# ヒントを入れる箇所
 var hint_count_down = 0.0	# 0.0より大きい：ヒント表示カウントダウン中
+var confetti_count_down = 0.0	# 0.0より大きい：紙吹雪表示中
 var hint_next_pos			# 次ボタン位置
 var hint_next_pos0			# 次ボタン初期位置
 var hint_next_vy			# 次ボタン速度
@@ -973,6 +974,10 @@ func _process(delta):
 		var m = sec / 60
 		sec -= m * 60
 		$TimeLabel.text = "%02d:%02d:%02d" % [h, m, sec]
+	if confetti_count_down > 0.0:
+		confetti_count_down -= delta
+		if confetti_count_down <= 0.0:
+			$FakeConfettiParticles.emitting = false
 	if hint_count_down > 0.0:
 		hint_count_down -= delta
 		if hint_count_down <= 0.0:
@@ -1001,6 +1006,7 @@ func is_all_solved_todaysQuest():
 	return g.tqSolvedSec[0] >= 0 && g.tqSolvedSec[1] >= 0 && g.tqSolvedSec[2] >= 0
 func on_solved():
 	solvedStat = true
+	confetti_count_down = 5.0
 	$FakeConfettiParticles.emitting = true
 	$CanvasLayer/ColorRect.show()
 	shock_wave_timer = 0.0      # start shock wave
