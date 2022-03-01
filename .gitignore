@@ -11,3 +11,6 @@ data_*/
 *.wasm
 
 silent_wolf/*
+SilentWolf.gd
+silent_wolf.gd
+
