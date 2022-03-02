@@ -1319,6 +1319,10 @@ func _on_NextButton_pressed():
 	set_num_cursor(-1)
 	update_all_status()
 
+func _on_FirstPageButton_pressed():
+	g.auto_save(false, [])
+	get_tree().change_scene("res://TopScene.tscn")
+
 func _on_BackButton_pressed():
 	g.auto_save(false, [])
 	if g.todaysQuest:
@@ -1327,7 +1331,6 @@ func _on_BackButton_pressed():
 		get_tree().change_scene("res://TopScene.tscn")
 	else:
 		get_tree().change_scene("res://LevelScene.tscn")
-
 
 func _on_UndoButton_pressed():
 	if paused: return		# ポーズ中
@@ -1552,3 +1555,5 @@ func _on_HintButton_pressed():
 	#	on_solved()
 	#update_all_status()
 	pass # Replace with function body.
+
+
