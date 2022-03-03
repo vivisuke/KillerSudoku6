@@ -52,6 +52,7 @@ func _on_Button2_pressed():
 
 func to_LevelScene(qLevel):
 	#print($LineEdit.text)
+	g.qNumber = 0
 	g.qLevel = qLevel
 	g.qName = ""
 	g.qRandom = false	#$LineEdit.text == ""
