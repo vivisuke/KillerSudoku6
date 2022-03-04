@@ -805,7 +805,9 @@ func push_to_undo_stack(item):
 	undo_ix += 1
 func sound_effect():
 	if sound:
-		if input_num > 0 && num_used[input_num] >= N_HORZ:
+		if nDuplicated != 0:
+			$AudioIncorrect.play()
+		elif input_num > 0 && num_used[input_num] >= N_HORZ:
 			$AudioNumCompleted.play()
 		else:
 			$AudioNumClicked.play()
