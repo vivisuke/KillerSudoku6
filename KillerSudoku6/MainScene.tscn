@@ -286,6 +286,7 @@ __meta__ = {
 }
 
 [node name="MenuButton" type="MenuButton" parent="TitleBar"]
+visible = false
 margin_left = 437.0
 margin_top = -2.0
 margin_right = 497.0
