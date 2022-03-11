@@ -9,6 +9,8 @@ export_presets.cfg
 data_*/
 
 *.wasm
+*.apk
+*.idsig
 
 silent_wolf/*
 SilentWolf.gd
