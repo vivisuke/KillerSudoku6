@@ -1297,7 +1297,7 @@ func gen_qName():
 func _on_NextButton_pressed():
 	if paused: return		# ポーズ中
 	$FakeConfettiParticles.emitting = false
-	g.auto_save(false, [])
+	#g.auto_save(false, [])
 	saved_cell_data = []
 	##$SolvedLayer.hide()
 	if g.todaysQuest:		# 今日の問題の場合
@@ -1322,11 +1322,11 @@ func _on_NextButton_pressed():
 	update_all_status()
 
 func _on_FirstPageButton_pressed():
-	g.auto_save(false, [])
+	#g.auto_save(false, [])
 	get_tree().change_scene("res://TopScene.tscn")
 
 func _on_BackButton_pressed():
-	g.auto_save(false, [])
+	#g.auto_save(false, [])
 	if g.todaysQuest:
 		get_tree().change_scene("res://TodaysQuest.tscn")
 	elif g.qNumber == 0:
@@ -1453,7 +1453,7 @@ func _on_AutoMemoButton_pressed():
 	g.save_environment()
 	push_to_undo_stack([UNDO_TYPE_AUTO_MEMO, lst])
 	update_all_status()
-	g.auto_save(true, get_cell_state())
+	#g.auto_save(true, get_cell_state())
 
 
 func _on_DelMemoButton_pressed():
@@ -1461,7 +1461,7 @@ func _on_DelMemoButton_pressed():
 	push_to_undo_stack([UNDO_TYPE_DEL_MEMO, lst])
 	remove_all_memo()
 	update_all_status()
-	g.auto_save(true, get_cell_state())
+	#g.auto_save(true, get_cell_state())
 
 func _on_MemoButton_toggled(button_pressed):
 	memo_mode = button_pressed
