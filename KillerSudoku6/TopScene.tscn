@@ -81,7 +81,7 @@ custom_constants/shadow_offset_x = 2
 custom_constants/shadow_offset_y = 2
 custom_fonts/font = SubResource( 1 )
 text = "SakuSaku
-SumDoku 6"
+sumnampla 6"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
