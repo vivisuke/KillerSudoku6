@@ -33,6 +33,10 @@ SilentWolf="*res://addons/silent_wolf/SilentWolf.gd"
 
 window/size/width=500
 window/size/height=900
+window/size/resizable=false
+window/handheld/orientation="portrait"
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
 
 [physics]
 
