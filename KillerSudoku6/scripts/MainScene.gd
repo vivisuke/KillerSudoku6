@@ -1184,6 +1184,10 @@ func _input(event):
 		if n >= 1 && n <= N_HORZ:
 			num_button_pressed(n, true)
 	pass
+func _notification(what):
+	if what == MainLoop.NOTIFICATION_WM_GO_BACK_REQUEST:	# For android
+		_on_BackButton_pressed()
+	pass
 func num_button_pressed(num : int, button_pressed):
 	#print("num = ", num)
 	if in_button_pressed: return		# ボタン押下処理中の場合

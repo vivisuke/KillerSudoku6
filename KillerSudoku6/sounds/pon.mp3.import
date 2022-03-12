@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/pon.mp3-337b647580d15629d1845813d605933c.mp3str"
+
+[deps]
+
+source_file="res://sounds/pon.mp3"
+dest_files=[ "res://.import/pon.mp3-337b647580d15629d1845813d605933c.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0
