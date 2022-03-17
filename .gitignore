@@ -10,6 +10,7 @@ data_*/
 
 *.wasm
 *.apk
+*.aar
 *.idsig
 
 silent_wolf/*

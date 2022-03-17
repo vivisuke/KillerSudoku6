@@ -790,11 +790,15 @@ func check_cages():		# 必ず check_duplicated() の直後にコールするこ�
 	pass
 func update_num_buttons_disabled():		# 使い切った数字ボタンをディセーブル
 	#var nUsed = []		# 各数字の使用数 [0] for EMPTY
-	for i in range(N_HORZ+1): num_used[i] = 0
-	for ix in range(N_CELLS):
-		num_used[get_cell_numer(ix)] += 1
-	for i in range(N_HORZ):
-		num_buttons[i+1].disabled = num_used[i+1] >= N_HORZ
+	if paused:
+		for i in range(N_HORZ+1):
+			num_buttons[i].disabled = true
+	else:
+		for i in range(N_HORZ+1): num_used[i] = 0
+		for ix in range(N_CELLS):
+			num_used[get_cell_numer(ix)] += 1
+		for i in range(N_HORZ):
+			num_buttons[i+1].disabled = num_used[i+1] >= N_HORZ
 func update_undo_redo():
 	$UndoButton.disabled = undo_ix == 0
 	$RedoButton.disabled = undo_ix == undo_stack.size()
@@ -803,14 +807,16 @@ func push_to_undo_stack(item):
 		undo_stack.resize(undo_ix)
 	undo_stack.push_back(item)
 	undo_ix += 1
-func sound_effect():
+func sound_effect(selected):
 	if sound:
 		if nDuplicated != 0:
 			$AudioIncorrect.play()
 		elif input_num > 0 && num_used[input_num] >= N_HORZ:
 			$AudioNumCompleted.play()
+		#elif selected:
+		#	$AudioNumClicked2.play()
 		else:
-			$AudioNumClicked.play()
+			$AudioNumClicked.play()		# pon
 func clear_cell_cursor():
 	for y in range(N_VERT):
 		for x in range(N_HORZ):
@@ -994,7 +1000,7 @@ func _process(delta):
 				on_solved()
 			update_all_status()
 			input_num = num
-			sound_effect()
+			sound_effect(false)		# ヒント数字確定
 		else:
 			var num = rng.randi_range(1, N_HORZ)
 			input_labels[hint_ix].text = String(num)
@@ -1135,6 +1141,7 @@ func _input(event):
 					cur_cell_ix = ix
 					do_emphasize_cell(ix)
 				update_all_status()
+				sound_effect(true)
 				return
 			if cur_num == 0:	# 削除ボタン選択中
 				if input_labels[ix].text != "":
@@ -1168,7 +1175,7 @@ func _input(event):
 				push_to_undo_stack([UNDO_TYPE_MEMO, ix, cur_num])
 				flip_memo_num(ix, cur_num)
 		update_all_status()
-		sound_effect()
+		sound_effect(false)
 		if !solvedStat && is_solved():
 			on_solved()
 	if event is InputEventKey && event.is_pressed():
@@ -1224,7 +1231,7 @@ func num_button_pressed(num : int, button_pressed):
 							memo_labels[cur_cell_ix][i].text = ""
 					num_buttons[num].pressed = false
 					update_all_status()
-					sound_effect()
+					sound_effect(false)
 					if !solvedStat && is_solved():
 						on_solved()
 				pass
@@ -1240,6 +1247,7 @@ func num_button_pressed(num : int, button_pressed):
 		else:
 			cur_num = -1		# toggled
 		update_cell_cursor(cur_num)
+		sound_effect(true)
 	in_button_pressed = false
 	update_all_status()
 	pass
@@ -1479,7 +1487,8 @@ func _on_MemoButton_toggled(button_pressed):
 		num_buttons[i+1].add_font_override("font", font)
 	pass # Replace with function body.
 
-
+#func set_disabled_all_buttons(disabled):
+#	pass
 func _on_PauseButton_pressed():
 	paused = !paused
 	if paused:
@@ -1499,8 +1508,8 @@ func _on_PauseButton_pressed():
 			memo_text[ix] = lst
 			if cage_labels[ix].text != "":
 				cage_labels[ix].text = "?"
-		for i in range(N_HORZ+1):
-			num_buttons[i].disabled = true
+		#for i in range(N_HORZ+1):
+		#	num_buttons[i].disabled = true
 	else:
 		for ix in range(N_CELLS):
 			if clue_labels[ix].text != "":
