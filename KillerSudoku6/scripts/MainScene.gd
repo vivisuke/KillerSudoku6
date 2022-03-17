@@ -1334,10 +1334,12 @@ func _on_NextButton_pressed():
 	update_all_status()
 
 func _on_FirstPageButton_pressed():
+	if paused: return		# ポーズ中
 	#g.auto_save(false, [])
 	get_tree().change_scene("res://TopScene.tscn")
 
 func _on_BackButton_pressed():
+	if paused: return		# ポーズ中
 	#g.auto_save(false, [])
 	if g.todaysQuest:
 		get_tree().change_scene("res://TodaysQuest.tscn")
@@ -1469,6 +1471,7 @@ func _on_AutoMemoButton_pressed():
 
 
 func _on_DelMemoButton_pressed():
+	if paused: return		# ポーズ中
 	var lst = get_memo()
 	push_to_undo_stack([UNDO_TYPE_DEL_MEMO, lst])
 	remove_all_memo()
@@ -1476,6 +1479,7 @@ func _on_DelMemoButton_pressed():
 	#g.auto_save(true, get_cell_state())
 
 func _on_MemoButton_toggled(button_pressed):
+	#if paused: return		# ポーズ中
 	memo_mode = button_pressed
 	print(memo_mode)
 	var sz = MEMO_FONT_SIZE if memo_mode else NUM_FONT_SIZE
