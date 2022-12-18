@@ -1141,7 +1141,7 @@ func _input(event):
 					cur_cell_ix = ix
 					do_emphasize_cell(ix)
 				update_all_status()
-				sound_effect(true)
+				#sound_effect(true)
 				return
 			if cur_num == 0:	# 削除ボタン選択中
 				if input_labels[ix].text != "":
@@ -1247,7 +1247,7 @@ func num_button_pressed(num : int, button_pressed):
 		else:
 			cur_num = -1		# toggled
 		update_cell_cursor(cur_num)
-		sound_effect(true)
+		#sound_effect(true)
 	in_button_pressed = false
 	update_all_status()
 	pass
