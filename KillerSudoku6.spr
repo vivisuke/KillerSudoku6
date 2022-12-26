@@ -196,7 +196,19 @@
 0194 ● C 03/18            │ToDo│数字ボタン、セル選択音は鳴らさない方がよさげ
 0195 ◎ C 12/18 12/18 0.001│ToDo│Android版設定：ウィンドウ＞ストレッチ＞モードを 2d に
 0196 ◎ C 12/18 12/18 0.001│ToDo│エクスポート＞Android：Laucher Icons 設定
-0197 ● C 12/18            │ToDo│
-0198 ● C 12/18            │ToDo│
-0199 ● C 12/18            │ToDo│
-0200 ● C 12/18            │ToDo│
+0197 ● C 12/18            │ToDo│Android版：vivisuke2.keystore で署名
+0198 ● C 12/22            │ToDo│aab 出力
+0199 ● C 12/22            │ToDo│プロジェクトアイコンも変更
+0200 ◎ C 12/22 12/23 0.001│問題│.aab Export を実行すると \Android\build\build.gradle' line: 23 でエラー
+									詳細： plugin request [id: 'com.android.application', version: '7.0.3']
+0201 ● C 12/22            │問題│.aab Export：compileSdkVersion is not specified. Please add it to build.gradle エラー
+									原因：versions.compileSdk が未定義？
+0202 ● C 12/22            │ToDo│
+0203 ● C 12/22            │ToDo│
+0204 ● C 12/22            │ToDo│
+0205 ● C 12/22            │ToDo│
+0206 ● C 12/22            │ToDo│
+0207 ● C 12/22            │ToDo│
+0208 ● C 12/22            │ToDo│
+0209 ● C 12/22            │ToDo│
+0210 ● C 12/22            │ToDo│

@@ -7,12 +7,6 @@
         android:normalScreens="true"
         android:largeScreens="true"
         android:xlargeScreens="true" />
-    <instrumentation
-        tools:node="replace"
-        android:name=".GodotInstrumentation"
-        android:icon="@mipmap/icon"
-        android:label="@string/godot_project_name_string"
-        android:targetPackage="org.godotengine.$genname" />
     <application android:label="@string/godot_project_name_string"
         android:allowBackup="false"
         android:isGame="true"
@@ -23,8 +17,10 @@
         android:icon="@mipmap/icon" >
 
         <meta-data tools:node="remove" android:name="xr_mode_metadata_name" />
+        <meta-data tools:node="remove" android:name="xr_hand_tracking_version_name" />
         <meta-data tools:node="remove" android:name="xr_hand_tracking_metadata_name" />
-        <activity android:name="com.godot.game.GodotApp" tools:replace="android:screenOrientation,android:excludeFromRecents" android:excludeFromRecents="false" android:screenOrientation="portrait">
+        <meta-data tools:node="remove" android:name="com.oculus.supportedDevices" />
+        <activity android:name="com.godot.game.GodotApp" tools:replace="android:screenOrientation,android:excludeFromRecents,android:resizeableActivity" android:excludeFromRecents="false" android:screenOrientation="portrait" android:resizeableActivity="false">
             <meta-data tools:node="remove" android:name="com.oculus.vr.focusaware" />
         </activity>
     </application>

@@ -22,7 +22,7 @@ _global_script_class_icons={
 
 config/name="KillerSudoku6"
 run/main_scene="res://TopScene.tscn"
-config/icon="res://icon.png"
+config/icon="res://icons/KillerSudoku.png"
 
 [autoload]
 
